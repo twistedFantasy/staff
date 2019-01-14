@@ -19,7 +19,7 @@ services:
       context: ../
       dockerfile: dockerX/ssm/Dockerfile.local
       args:
-         IMAGE: ${PYTHON_IMAGE}
+         IMAGE: "python:3.6.8"
     restart: on-failure
     env_file:
       - ssm/develop.env
@@ -36,7 +36,7 @@ services:
       - network
 
   worker:
-    image: ${PYTHON_IMAGE}
+    image: "python:3.6.8"
     command: >
       sh -c "cd /usr/src/ssm/ &&
             pip install -r requirements.txt &&
@@ -55,7 +55,7 @@ services:
       - network
 
   postgres:
-    image: ${POSTGRES_IMAGE}
+    image: "postgres:11.1-alpine"
     env_file:
       - ssm/develop.env
     ports:
@@ -66,7 +66,7 @@ services:
       - network
 
   redis:
-    image: ${REDIS_IMAGE}
+    image: "redis:5.0.3-alpine"
     volumes:
       - redis-data:/data
     networks:
@@ -83,7 +83,7 @@ services:
       - network
 
   flower:
-    image: ${PYTHON_IMAGE}
+    image: "python:3.6.8"
     command: >
       sh -c "cd /usr/src/ssm/ &&
             pip install -r requirements.txt &&
