@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     # 3rd party
     'taggit',
+    'corsheaders',
     'djcelery_email',
     'debug_toolbar',
     'rest_framework',
@@ -59,6 +60,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -188,6 +190,9 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': datetime.timedelta(seconds=1209600),  # 2 weeks
     'AUTH_HEADER_TYPES': ('Bearer', 'JWT'),
 }
+
+# cors
+CORS_ORIGIN_ALLOW_ALL = bool(os.environ['CORS_ORIGIN_ALLOW_ALL'])
 
 # rest framework
 REST_FRAMEWORK = {
