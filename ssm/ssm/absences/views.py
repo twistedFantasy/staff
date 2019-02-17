@@ -1,6 +1,7 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import IsAuthenticated
 
 from ssm.absences.models import Absence
 from ssm.absences.filters import AbsenceFilter
@@ -12,7 +13,7 @@ from ssm.users.filters import UserFilterBackend
 class AbsenceViewSet(ModelViewSet):
     queryset = Absence.objects.all()
     serializer_class = AbsenceSerializer
-    permission_classes = [IsAbsenceOwnerOrStaff]
+    permission_classes = [IsAuthenticated, IsAbsenceOwnerOrStaff]
     filter_backends = [DjangoFilterBackend, OrderingFilter, UserFilterBackend]
     filterset_class = AbsenceFilter
 

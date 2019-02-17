@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'ssm.users',
     'ssm.absences',
     'ssm.skills',
+    'ssm.projects',
 ]
 
 MIDDLEWARE = [

@@ -23,7 +23,7 @@ class SSMTokenObtainPairView(CustomTokenObtainPairView):
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [ReadOnlyOrStaff, IsCurrentUserOrStaff]
+    permission_classes = [ReadOnlyOrStaff, IsCurrentUserOrStaff, IsAuthenticated]
     filter_backends = [ObjectFieldFilterBackend, SearchFilter, OrderingFilter, DjangoFilterBackend]
     filterset_class = UserFilter
     search_fields = ['email', 'full_name']

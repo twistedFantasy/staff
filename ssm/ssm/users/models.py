@@ -55,6 +55,9 @@ class User(AbstractBaseUser, BaseModel):
     assessment_date = models.DateField('Assessment Date', null=True, blank=True)
     assessment_plan = models.TextField('Assessment Plan', null=True, blank=True)
 
+    # project
+    is_customer = models.BooleanField('Is customer', null=False, blank=False, default=False)
+
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
