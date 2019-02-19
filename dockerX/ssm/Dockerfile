@@ -10,9 +10,12 @@ RUN mkdir -p $APP_PATH
 RUN mkdir -p $SCRIPTS_PATH
 WORKDIR $APP_PATH
 
+RUN pip install pipenv==2018.11.26
+
 COPY dockerX/ssm/systemuser.py $SCRIPTS_PATH
-COPY ssm/requirements.txt .
-RUN pip install -r requirements.txt
+COPY ssm/Pipfile .
+COPY ssm/Pipfile.lock .
+RUN pipenv install --system --deploy
 COPY ssm/ .
 
 CMD python3 manage.py migrate && python3 $SCRIPTS_PATH/systemuser.py && python3 manage.py runserver 0.0.0.0:8000

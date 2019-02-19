@@ -6,6 +6,7 @@ from rest_framework import routers
 from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 
 from ssm.users.views import UserViewSet, ChangePasswordView, SSMTokenObtainPairView
+from ssm.skills.views import SkillViewSet
 from ssm.absences.views import AbsenceViewSet
 
 
@@ -16,6 +17,7 @@ admin.site.site_title = settings.NAME + suffix
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
+router.register(r'skills', SkillViewSet)
 router.register(r'absences', AbsenceViewSet)
 
 urlpatterns = [
