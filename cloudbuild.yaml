@@ -8,7 +8,7 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/staff-232313/ssm-image']
   - name: 'gcr.io/cloud-builders/kubectl'
-    args: ['set', 'image', 'deployment/staff-ssm', 'nginx=gcr.io/staff-232313/ssm-image']
+    args: ['set', 'image', 'deployment/staff-ssm', 'ssm-image-sha256=gcr.io/staff-232313/ssm-image']
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=europe-west4-a'
       - 'CLOUDSDK_CONTAINER_CLUSTER=staff-cluster'
