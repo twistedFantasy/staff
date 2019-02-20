@@ -1,6 +1,9 @@
 steps:
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/staff-232313/ssm-image', '-f', 'dockerX/ssm/Dockerfile', '.']
+    args:
+      [
+        'build', '--build-arg', 'IMAGE=python:3.6.8', '-t', 'gcr.io/staff-232313/ssm-image', '-f', 'dockerX/ssm/Dockerfile', '.'
+      ]
     timeout: 500s
     env:
       - ENV=stg
