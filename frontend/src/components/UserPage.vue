@@ -112,9 +112,6 @@
   .v-tabs__bar.theme--light{
     background: none;
     border-bottom: 1px solid grey;
-  } 
-  .v-card.v-sheet.theme--light {
-    background: none;
   }
 
 </style>

@@ -1,0 +1,1 @@
+export const absenceReasonOptions = ['Vacation', 'Illness', 'Holiday', 'Other']

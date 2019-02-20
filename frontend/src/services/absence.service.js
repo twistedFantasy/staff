@@ -4,14 +4,6 @@ const http = require('./http.init');
 
 import { API_URL } from '../.env';
 
-/*
-export const makeLogin = ({email, password}) => {
-  const id = http.post(`${API_URL}/api/v1/token/obtain/`, {email, password});
-  console.log(id, 'id');
-  return id;
-}
-*/
-
 export const getAllAbsencesByUserId = () => {
   const requestOptions = {
     method: 'GET',
@@ -22,7 +14,19 @@ export const getAllAbsencesByUserId = () => {
     .then(user => {
       return user;
     });
+}
 
+export const createNewAbsence = (data) => {
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization':  'JWT' + ' ' + localStorage.getItem('user') },
+    body: JSON.stringify(data)
+  };
+  return fetch(`${API_URL}/api/v1/absences/`, requestOptions)
+    .then(handleResponse)
+    .then(user => {
+      return user;
+    });
 }
 
 function handleResponse(response) {
