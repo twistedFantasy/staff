@@ -1,39 +1,32 @@
 <template>
   <v-container>
-    <v-layout
-      text-xs-center
-      wrap
-    >
-      <v-flex xs12>
-        <v-img
-          :src="require('../assets/logo.svg')"
-          class="my-3"
-          contain
-          height="200"
-        ></v-img>
-      </v-flex>
-
-      <v-flex mb-4>
-        <h1 class="display-2 font-weight-bold mb-3">
-          Welcome to Codex
-          {{user}}
-        </h1>
-        <p class="subheading font-weight-regular">
-          Here you can celebrate your holidays and sick leave.
-        </p>
-      </v-flex>
-    </v-layout>
+    <div v-if="userId"><UserPage/></div>
+    <div v-if="!userId"><Login/></div>
   </v-container>
 </template>
 
 <script>
+import UserPage from "@/components/UserPage.vue";
+import Login from "@/components/Login.vue";
   export default {
-    computed: {
-    user() {
-      return this.$store.state.userProfile;
-     // console.log(user.name, 'user');
-    }
-    }
+    components: {
+      UserPage,
+      Login,
+    },
+    data: () => ({
+      userId: null,
+    }),
+    created () {
+      this.getUserId();
+    },
+    mounted () {
+      this.userId = this.$store.state.user.logedUserId;
+    },
+     methods: {
+      getUserId() {
+        this.$store.dispatch('user/setUserId');
+      },
+     }
   }
 </script>
 

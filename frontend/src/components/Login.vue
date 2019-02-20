@@ -58,7 +58,7 @@ export default {
   },
   methods: {
     getUserProfile(userId) {
-      const responce = authService.getUserById(userId).then(
+      authService.getUserById(userId).then(
         data => {
             this.$store.dispatch('user/setUser', data)
         },
@@ -68,7 +68,7 @@ export default {
       );
     },
     makeLogin () {
-       const responce = authService.makeLogin(this.email, this.password).then(
+       authService.makeLogin(this.email, this.password).then(
         data => {
             this.error = null;
              this.$store.dispatch('user/setUserId', data.user)
