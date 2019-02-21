@@ -72,7 +72,7 @@
         </td>
       </template>
       <template slot="no-data">
-        <v-btn color="primary" @click="getAbsence">Reset</v-btn>
+        <v-btn color="primary" @click="getAbsences">Reset</v-btn>
       </template>
     </v-data-table>
   </div>
@@ -119,11 +119,13 @@ import * as config from '@/config.js';
         val || this.close()
       }
     },
+
     created () {    
-      this.getAbsence();
+      this.getAbsences();
     },
+
     methods: {
-      getAbsence() {
+      getAbsences() {
         absenceService.getAllAbsencesByUserId().then(
           data => {
              this.$store.dispatch('absence/setAllAbsence', data.results)
@@ -134,20 +136,24 @@ import * as config from '@/config.js';
           }
         );
       },
+
        editItem (item) {
-         console.log(item, 'editItem')
-       /* this.editedIndex = this.desserts.indexOf(item)
+        this.editedIndex = this.absences.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
-        */
       },
+
       deleteItem (item) {
-        console.log(item, 'deleteItem')
-        /*
-        const index = this.desserts.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
-        */
+        absenceService.deleteAbsence(item.id).then(
+          data => {
+            this.getAbsences();
+          },
+          error => {
+            console.log(error, 'error')
+          }
+        );
       },
+
       close () {
         this.dialog = false
         setTimeout(() => {
@@ -155,6 +161,7 @@ import * as config from '@/config.js';
           this.editedIndex = -1
         }, 300)
       },
+
       save () {
         const data = {
           reason: this.editedItem.reason,
@@ -162,15 +169,28 @@ import * as config from '@/config.js';
           end_date: this.editedItem.end_date,
           notes: this.editedItem.notes,
         }
+        if (this.editedIndex == -1) {        
         absenceService.createNewAbsence(data).then(
           data => {
-            this.getAbsence();
+            this.getAbsences();
             this.close();
           },
           error => {
             console.log(error, 'error')
           }
         );
+        }
+        else {
+          absenceService.editAbsence(data, this.editedItem.id).then(
+          data => {
+            this.getAbsences();
+            this.close();
+          },
+          error => {
+            console.log(error, 'error')
+          }
+        );
+        }
       }
     },
   }

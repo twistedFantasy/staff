@@ -1,1 +1,1 @@
-export const absenceReasonOptions = ['Vacation', 'Illness', 'Holiday', 'Other']
+export const absenceReasonOptions = ['vacation', 'illness', 'holiday', 'other']

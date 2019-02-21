@@ -29,14 +29,39 @@ export const createNewAbsence = (data) => {
     });
 }
 
+export const editAbsence = (data, id) => {
+  const requestOptions = {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'Authorization':  'JWT' + ' ' + localStorage.getItem('user') },
+    body: JSON.stringify(data)
+  };
+  return fetch(`${API_URL}/api/v1/absences/${id}/`, requestOptions)
+  .then(handleResponse)
+  .then(user => {
+    return user;
+  });
+}
+
+export const deleteAbsence = (id) => {
+  const requestOptions = {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json', 'Authorization':  'JWT' + ' ' + localStorage.getItem('user') }
+  };
+  return fetch(`${API_URL}/api/v1/absences/${id}/`, requestOptions)
+  .then(handleResponse)
+  .then(user => {
+    return user;
+  });
+} 
+
 function handleResponse(response) {
   return response.text().then(text => {
-      const data = text && JSON.parse(text);
-      if (!response.ok) {
-          const error = (data && data.msg) || response.statusText;
-          return Promise.reject(error);
-      }
+    const data = text && JSON.parse(text);
+    if (!response.ok) {
+        const error = (data && data.msg) || response.statusText;
+        return Promise.reject(error);
+    }
 
-      return data;
+    return data;
   });
 }

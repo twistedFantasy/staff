@@ -17,12 +17,11 @@ export const getUserById = (id) => {
     method: 'GET',
     headers: { 'Content-Type': 'application/json', 'Authorization':  'JWT' + ' ' + localStorage.getItem('user') },
   };
-  return fetch(`${API_URL}/api/v1/users/${id}`, requestOptions)
+  return fetch(`${API_URL}/api/v1/users/${id}/`, requestOptions)
     .then(handleResponse)
     .then(user => {
       return user;
-    });
-
+  });
 }
 
 export const makeLogin = (email, password) => {
