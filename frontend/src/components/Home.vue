@@ -1,7 +1,5 @@
 <template>
   <v-container>
-    <div v-if="userId"><UserPage/></div>
-    <div v-if="!userId"><Login/></div>
   </v-container>
 </template>
 
@@ -25,6 +23,12 @@ import Login from "@/components/Login.vue";
      methods: {
       getUserId() {
         this.$store.dispatch('user/setUserId');
+        if (this.$store.state.user.logedUserId) {
+            this.$router.push('/UserPage');
+        }
+        else {
+          this.$router.push('/Login');
+        }
       },
      }
   }
