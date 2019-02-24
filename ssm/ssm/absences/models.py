@@ -2,13 +2,15 @@ from django.db import models
 from model_utils.choices import Choices
 
 from ssm.users.models import User
+from ssm.core.models import BaseModel
 
 
-STATUS = Choices(('new', 'New'), ('approving', 'Approving'), ('approved', 'Approved'))
+STATUS = Choices(('new', 'New'), ('veryfing', 'Verifying'), ('approved', 'Approved'), ('rejected', 'Rejected'))
 REASON = Choices(('vacation', 'Vacation'), ('illness', 'Illness'), ('holiday', 'Holiday'), ('other', 'Other'))
+BLOCKED_STATUSES = [STATUS.approved, STATUS.rejected]
 
 
-class Absence(models.Model):
+class Absence(BaseModel):
     user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
     reason = models.CharField('Reason', max_length=32, choices=REASON, default=REASON.other)
     status = models.CharField('Status', max_length=32, choices=STATUS, default=STATUS.new)

@@ -11,4 +11,4 @@ class AbsenceSerializer(DynamicFieldsMixin, ModelSerializer):
     class Meta:
         model = Absence
         fields = ['id', 'user', 'reason', 'status', 'approved_by', 'start_date', 'end_date', 'notes']
-        read_only_fields = ['id']
+        read_only_fields = ['id', 'user', 'approved_by']
