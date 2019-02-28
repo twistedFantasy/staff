@@ -23,6 +23,20 @@ export default {
       //
     }
   },
+  created () {
+      this.getUserId();
+    },
+    methods: {
+      getUserId() {
+        this.$store.dispatch('user/setUserId');
+        if (this.$store.state.user.logedUserId) {
+            this.$router.push('/UserPage');
+        }
+        else {
+          this.$router.push('/Login');
+        }
+      },
+     }
 }
 </script>
 

@@ -24,15 +24,16 @@
 </template>
 
 <script>
-  import * as authService from '../services/auth.service'
+  import { mapState } from 'vuex';
   export default {
      data: () => ({
       userProfile: {},
     }),
-     mounted () {
-      this.userProfile = this.$store.state.user.userProfile;
-    },
- 
+    mounted () {
+      this.$store.watch(this.$store.getters['user/getUserProfile'], n => {
+        this.userProfile = n;
+    })
+    }
   }
 </script>
 

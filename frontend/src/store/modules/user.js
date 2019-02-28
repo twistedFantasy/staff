@@ -9,7 +9,7 @@ const state = {
 
 // getters
 const getters = {
-
+  getUserProfile: state => () => state.userProfile
 }
 
 // actions
@@ -28,11 +28,13 @@ const mutations = {
 
   setUserId (state ) {
     const jwtToken = localStorage.getItem('user');
+    if(jwtToken ) {
     var base64Url = jwtToken.split('.')[1];
     var base64 = base64Url.replace('-', '+').replace('_', '/');
     const objectToken = JSON.parse(window.atob(base64));
     const id = objectToken.user_id;
     state.logedUserId = id;
+    }
   },
   setUser (state, data ) {
     state.userProfile = data;

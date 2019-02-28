@@ -84,7 +84,7 @@
         authService.getUserById(this.$store.state.user.logedUserId).then(
           data => {
               this.$store.dispatch('user/setUser', data)
-               this.userProfile = data;
+              this.userProfile = data;
           },
           error => {
             console.log(error, 'error')

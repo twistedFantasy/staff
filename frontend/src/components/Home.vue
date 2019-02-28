@@ -11,26 +11,14 @@ import Login from "@/components/Login.vue";
       UserPage,
       Login,
     },
-    data: () => ({
-      userId: null,
-    }),
     created () {
-      this.getUserId();
-    },
-    mounted () {
-      this.userId = this.$store.state.user.logedUserId;
-    },
-     methods: {
-      getUserId() {
-        this.$store.dispatch('user/setUserId');
-        if (this.$store.state.user.logedUserId) {
-            this.$router.push('/UserPage');
-        }
+      if (this.$store.state.user.logedUserId) {
+          this.$router.push('/UserPage');
+      }
         else {
           this.$router.push('/Login');
-        }
-      },
-     }
+      }
+    },
   }
 </script>
 
