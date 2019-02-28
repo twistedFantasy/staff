@@ -24,15 +24,12 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex';
+  import { mapState, mapGetters } from 'vuex';
   export default {
      data: () => ({
-      userProfile: {},
     }),
-    mounted () {
-      this.$store.watch(this.$store.getters['user/getUserProfile'], n => {
-        this.userProfile = n;
-    })
+    computed: {
+      ...mapGetters('user', { userProfile: 'getUserProfile'})
     }
   }
 </script>

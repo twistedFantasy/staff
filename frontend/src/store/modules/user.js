@@ -9,7 +9,7 @@ const state = {
 
 // getters
 const getters = {
-  getUserProfile: state => () => state.userProfile
+  getUserProfile: state => state.userProfile
 }
 
 // actions
