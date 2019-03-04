@@ -65,8 +65,8 @@ class User(AbstractBaseUser, BaseModel):
 
     class Meta:
         app_label = 'users'
-        ordering = ['-modified']
         verbose_name_plural = 'Users'
+        ordering = ['-modified']
 
     def __str__(self):
         return u'%s (user %s)' % (self.get_full_name(), self.id)

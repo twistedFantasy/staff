@@ -8,6 +8,7 @@ ENV SCRIPTS_PATH=/usr/src/scripts
 
 RUN mkdir -p $APP_PATH
 RUN mkdir -p $SCRIPTS_PATH
+RUN mkdir -p /var/ssm/data/
 WORKDIR $APP_PATH
 
 RUN pip install pipenv==2018.11.26

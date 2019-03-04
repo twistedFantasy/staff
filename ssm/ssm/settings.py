@@ -249,3 +249,6 @@ DEBUG_TOOLBAR_PANELS = [
 ASSESSMENT_NOTIFIER = 10
 ASSESSMENT_SUBJECT = "Assessment reminder"
 ASSESSMENT_TEXT = "Hey, just a friendly reminder, assessment is so close, here is our discussed and approved plan: %s. Are you ready?"
+
+MEDIA_ROOT = '/var/ssm/data/'
+MEDIA_URL = '/media/'

@@ -3,15 +3,15 @@ from drf_dynamic_fields import DynamicFieldsMixin
 from rest_framework import serializers
 from drf_dynamic_fields import DynamicFieldsMixin
 
-from ssm.projects.models import Project, MembershipModel
+from ssm.projects.models import Project, MembersModel
 from ssm.users.models import User
 
 
-class MembershipSerializer(ModelSerializer):
+class MembersSerializer(ModelSerializer):
     user_name = serializers.ReadOnlyField(source='user.full_name')
 
     class Meta:
-        model = MembershipModel
+        model = MembersModel
         fields = ['user_name', 'role', 'hours_per_day']
         read_only = ['user_name']
 
@@ -25,8 +25,8 @@ class CustomerSerializer(ModelSerializer):
 
 
 class ProjectSerializer(DynamicFieldsMixin, ModelSerializer):
-    members = MembershipSerializer(source='membershipmodel_set', many=True, read_only=True)
-    customer = CustomerSerializer(many=False, read_only=True)
+    members = MembersSerializer(source='membersmodel_set', many=True, read_only=True)
+    customer = CustomerSerializer(read_only=True)
 
     class Meta:
         model = Project

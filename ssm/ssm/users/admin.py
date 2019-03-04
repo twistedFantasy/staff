@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 
 from ssm.skills.models import UserSkillModel
-from ssm.projects.models import MembershipModel, Project
+from ssm.projects.models import MembersModel, Project
 from ssm.users.models import User
 from ssm.users.tasks.assessment import Assessment
 from ssm.core.decorators import message_user
@@ -15,7 +15,7 @@ class UserSkillInline(admin.TabularInline):
 
 
 class UserProjectInline(admin.TabularInline):
-    model = MembershipModel
+    model = MembersModel
 
 
 class UserAdmin(UserAdmin):
