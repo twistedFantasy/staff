@@ -1,6 +1,4 @@
-from rest_framework.serializers import ModelSerializer
-from drf_dynamic_fields import DynamicFieldsMixin
-from rest_framework import serializers
+from rest_framework.serializers import ReadOnlyField, ModelSerializer
 from drf_dynamic_fields import DynamicFieldsMixin
 
 from ssm.projects.models import Project, MembersModel
@@ -8,7 +6,7 @@ from ssm.users.models import User
 
 
 class MembersSerializer(ModelSerializer):
-    user_name = serializers.ReadOnlyField(source='user.full_name')
+    user_name = ReadOnlyField(source='user.full_name')
 
     class Meta:
         model = MembersModel

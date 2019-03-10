@@ -19,7 +19,7 @@ class ProjectAdmin(admin.ModelAdmin):
     list_filter = ['customer']
 
     def get_members_count(self, obj):
-        return len(obj.members.filter(membersmodel__left_date=None))
+        return obj.members.filter(membersmodel__left_date=None).count()
     get_members_count.short_description = 'Members'
 
 
