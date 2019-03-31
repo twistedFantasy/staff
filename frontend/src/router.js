@@ -8,12 +8,6 @@ export default new Router({
   base: process.env.BASE_URL,
   routes: [
     {
-      path: "/",
-      name: "Home",
-      component: () =>
-        import(/* webpackChunkName: "about" */ "./views/Home.vue")
-    },
-    {
       path: "/Login",
       name: "Login",
       // route level code-splitting

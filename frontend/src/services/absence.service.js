@@ -1,15 +1,13 @@
-import axios from 'axios'
-const http = require('./http.init');
-
 
 import { API_URL } from '../.env';
 
-export const getAllAbsencesByUserId = () => {
+export const getAllAbsencesByUserId = (dataFilter) => {
   const requestOptions = {
     method: 'GET',
     headers: { 'Content-Type': 'application/json', 'Authorization':  'JWT' + ' ' + localStorage.getItem('user') },
   };
-  return fetch(`${API_URL}/api/v1/absences/`, requestOptions)
+  const url = dataFilter && dataFilter.type && dataFilter.value ? `${API_URL}/api/v1/absences/?${dataFilter.type}=${dataFilter.value}&` : `${API_URL}/api/v1/absences/`;
+  return fetch(url, requestOptions)
     .then(handleResponse)
     .then(user => {
       return user;
