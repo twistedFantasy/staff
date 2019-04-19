@@ -3,6 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 
 from ssm.skills.models import UserSkillModel
+from ssm.projects.models import MembersModel, Project
 from ssm.users.models import User
 from ssm.users.tasks.assessment import Assessment
 from ssm.core.decorators import message_user
@@ -11,6 +12,10 @@ from ssm.core.decorators import message_user
 class UserSkillInline(admin.TabularInline):
     model = UserSkillModel
     extra = 1
+
+
+class UserProjectInline(admin.TabularInline):
+    model = MembersModel
 
 
 class UserAdmin(UserAdmin):
@@ -35,11 +40,12 @@ class UserAdmin(UserAdmin):
             'fields': ['email', 'password1', 'password2']}
          ),
     ]
-    inlines = [UserSkillInline]
+    inlines = [UserSkillInline, UserProjectInline]
     ordering = ['-modified']
     filter_horizontal = []
     show_full_result_count = False
     actions = ['notify_users']
+    list_filter = ['is_customer']
 
     @message_user("Notified!")
     def notify_users(self, request, queryset):

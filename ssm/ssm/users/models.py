@@ -55,6 +55,9 @@ class User(AbstractBaseUser, BaseModel):
     assessment_date = models.DateField('Assessment Date', null=True, blank=True)
     assessment_plan = models.TextField('Assessment Plan', null=True, blank=True)
 
+    # project
+    is_customer = models.BooleanField('Is customer', null=False, blank=False, default=False)
+
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
@@ -62,8 +65,8 @@ class User(AbstractBaseUser, BaseModel):
 
     class Meta:
         app_label = 'users'
-        ordering = ['-modified']
         verbose_name_plural = 'Users'
+        ordering = ['-modified']
 
     def __str__(self):
         return u'%s (user %s)' % (self.get_full_name(), self.id)
