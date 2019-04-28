@@ -2,27 +2,32 @@
   <div class="right-block">
     <div class="filter-block">
       <v-select
-        v-model="selectedTypeOfFilter"
-        :items="typeOfFiltresOptions"
+        v-model="selectedReason"
+        :items="absenceReasonOptions"
         menu-props="auto"
-        label="Select type of filter"
+        label="Select reason"
         hide-details
         prepend-icon="map"
         single-line
       ></v-select>
       <v-select
-        v-if="selectedTypeOfFilter === 'reason' || selectedTypeOfFilter === 'status'"
-        v-model="selectedFilter"
-        :items="getCurrentOptons()"
+        v-model="selectedStatus"
+        :items="absenceStatusOptions"
         menu-props="auto"
-        label="Select filter"
+        label="Select status"
         hide-details
         prepend-icon="map"
         single-line
       ></v-select>
       <v-text-field
-        v-if="selectedTypeOfFilter === 'start_date' || selectedTypeOfFilter === 'end_date'"
-        v-model="selectedDateFilterValue"
+        v-model="selectedStartDate"
+        append-icon="search"
+        label="yyyy-mm-dd"
+        single-line
+        hide-details
+      ></v-text-field>
+      <v-text-field
+        v-model="selectedEndDate"
         append-icon="search"
         label="yyyy-mm-dd"
         single-line
@@ -38,54 +43,68 @@ import * as config from "@/config.js";
 
 export default {
   props: {
-    getAbsences: { type: Function },
+    getAbsences: { type: Function }
   },
   data: () => ({
-    selectedDateFilterValue: "",
-    selectedTypeOfFilter: "",
-    selectedFilter: "",
+    selectedReason: "",
+    selectedStatus: "",
+    selectedStartDate: "",
+    selectedEndDate: "",
     absenceReasonOptions: config.absenceReasonOptions,
-    typeOfFiltresOptions: config.typeOfFiltresOptions,
     absenceStatusOptions: config.absenceStatusOptions
   }),
 
   watch: {
-    selectedFilter(val) {
-      console.log(this, 'this')
-      if (val) {
-        this.getAbsences({ type: this.selectedTypeOfFilter, value: val });
-      }
+    selectedReason() {
+      this.createFilter();
     },
+    selectedStatus() {
+      this.createFilter();
+    },
+    selectedStartDate(val) {
+      this.selectedDateFilterValue(val);
+    },
+    selectedEndDate(val) {
+      this.selectedDateFilterValue(val);
+    },
+
+  
+  },
+
+  methods: {
     selectedDateFilterValue(val) {
       if (val) {
         const re = /^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/g;
         const isValid = re.test(val);
         if (isValid) {
-          this.getAbsences({ type: this.selectedTypeOfFilter, value: val });
+          this.createFilter();
         }
       }
-    }
-  },
+    },
 
-  methods: {
     clearFilter() {
-      this.selectedDateFilterValue = "";
-      this.selectedTypeOfFilter = "";
-      this.selectedFilter = "";
+      this.selectedReason = "";
+      this.selectedStatus = "";
+      this.selectedStartDate = "";
+      this.this.selectedEndDate = "";
       this.getAbsences();
     },
-    getCurrentOptons() {
-      const currentSelections = this.selectedTypeOfFilter;
-      let answer = [];
-      switch (currentSelections) {
-        case "reason":
-          answer = this.absenceReasonOptions;
-          break;
-        case "status":
-          answer = this.absenceStatusOptions;
-          break;
+
+    createFilter() {
+      let result = '?';
+      if (this.selectedReason) {
+        result = result + `reason=${this.selectedReason}&`;
       }
-      return answer;
+      if (this.selectedStatus) {
+        result = result + `status=${this.selectedStatus}&`;
+      }
+      if (this.selectedStartDate) {
+        result = result + `start_date=${this.selectedStartDate}&`;
+      }
+      if (this.selectedEndDate) {
+        result = result + `end_date=${this.selectedEndDate}&`;
+      }
+      this.getAbsences(result);
     }
   }
 };
