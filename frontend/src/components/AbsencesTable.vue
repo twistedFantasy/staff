@@ -36,9 +36,9 @@
     <div class="absence-table">
       <v-toolbar flat color="white" class="table-header">
         <v-toolbar-title>My Absences</v-toolbar-title>
-        <FiltersBar :getAbsences="getAbsences" />
+        <FiltersBar :getAbsences="getAbsences" :setPagination="setPagination"/>
       </v-toolbar>
-      <v-data-table :headers="headers" :items="absences" class="elevation-1">
+      <v-data-table :headers="headers" :items="absences" class="elevation-1" hide-actions>
         <template slot="items" slot-scope="props">
           <td>{{ props.item.reason }}</td>
           <td class="text-xs-left">{{ props.item.start_date }}</td>
@@ -51,20 +51,33 @@
         </template>
       </v-data-table>
     </div>
+    <div class="text-xs-center pagination">
+      <v-pagination
+        v-model="paginationInfo.page"
+        :length="paginationInfo.count"
+        :total-visible="7"
+        circle
+      ></v-pagination>
+    </div>
   </div>
 </template>
 
 <script>
 import * as absenceService from "../services/absence.service";
 import * as config from "@/config.js";
-import FiltersBar from './FiltersBar';
+import FiltersBar from "./FiltersBar";
 
 export default {
-  
   components: {
     FiltersBar
   },
   data: () => ({
+    paginationInfo: {
+      page: 1,
+      limit: 5,
+      count: 1,
+    },
+
     absenceReasonOptions: config.absenceReasonOptions,
     dialog: false,
     headers: [
@@ -99,23 +112,36 @@ export default {
     dialog(val) {
       val || this.close();
     },
+    'paginationInfo.page'() {
+      this.getAbsences("");
+    }
   },
 
   created() {
-    this.getAbsences();
+    this.getAbsences("");
   },
 
   methods: {
     getAbsences(dataFilter) {
-      absenceService.getAllAbsencesByUserId(dataFilter).then(
+      const currentpage = this.paginationInfo.page - 1;
+      const limit = this.paginationInfo.limit;
+
+      const filter = `?limit=${limit}&offset=${currentpage *
+        limit}&${dataFilter}`;
+      absenceService.getAllAbsencesByUserId(filter).then(
         data => {
           this.$store.dispatch("absence/setAllAbsence", data.results);
           this.absences = data.results;
+          this.setPagination({ count: Math.ceil(data.count / limit) });
         },
         error => {
           console.log(error, "error");
         }
       );
+    },
+
+    setPagination(paginationInfo) {
+        this.paginationInfo = { ...this.paginationInfo, ...paginationInfo };
     },
 
     editItem(item) {
@@ -127,7 +153,7 @@ export default {
     deleteItem(item) {
       absenceService.deleteAbsence(item.id).then(
         () => {
-          this.getAbsences();
+          this.getAbsences("");
         },
         error => {
           console.log(error, "error");
@@ -153,7 +179,7 @@ export default {
       if (this.editedIndex == -1) {
         absenceService.createNewAbsence(data).then(
           () => {
-            this.getAbsences();
+            this.getAbsences("");
             this.close();
           },
           error => {
@@ -163,7 +189,7 @@ export default {
       } else {
         absenceService.editAbsence(data, this.editedItem.id).then(
           () => {
-            this.getAbsences();
+            this.getAbsences("");
             this.close();
           },
           error => {
@@ -186,7 +212,9 @@ export default {
   justify-content: flex-end;
 }
 
-.v-toolbar__content {
+
+
+.table-header .v-toolbar__content{
   width: 100%;
   display: grid;
   grid-template-columns: 2fr 8fr;
@@ -204,5 +232,8 @@ export default {
 .right-block {
   display: grid;
   grid-template-columns: 9fr 1fr;
+}
+.pagination {
+  margin-top: 20px;
 }
 </style>

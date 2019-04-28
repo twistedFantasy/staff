@@ -41,7 +41,8 @@ import * as config from "@/config.js";
 
 export default {
   props: {
-    getAbsences: { type: Function }
+    getAbsences: { type: Function },
+    setPagination: { type: Function }
   },
   data: () => ({
     selectedReason: "",
@@ -64,9 +65,7 @@ export default {
     },
     selectedEndDate(val) {
       this.selectedDateFilterValue(val);
-    },
-
-  
+    }
   },
 
   methods: {
@@ -85,11 +84,12 @@ export default {
       this.selectedStatus = "";
       this.selectedStartDate = "";
       this.selectedEndDate = "";
-      this.getAbsences();
+      this.getAbsences("");
     },
 
     createFilter() {
-      let result = '?';
+      let result = "";
+      this.setPagination({page: 1, count: 1});
       if (this.selectedReason) {
         result = result + `reason=${this.selectedReason}&`;
       }
