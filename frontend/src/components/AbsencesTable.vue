@@ -189,16 +189,17 @@ export default {
 .v-toolbar__content {
   width: 100%;
   display: grid;
-  grid-template-columns: 4fr 6fr;
+  grid-template-columns: 2fr 8fr;
   justify-content: space-between;
   grid-column-gap: 10px;
   padding: 0;
+  margin: 20px 0;
 }
 .filter-block {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   justify-content: space-between;
-  grid-column-gap: 10px;
+  grid-column-gap: 15px;
 }
 .right-block {
   display: grid;

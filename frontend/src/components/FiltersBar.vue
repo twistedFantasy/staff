@@ -7,7 +7,6 @@
         menu-props="auto"
         label="Select reason"
         hide-details
-        prepend-icon="map"
         single-line
       ></v-select>
       <v-select
@@ -16,7 +15,6 @@
         menu-props="auto"
         label="Select status"
         hide-details
-        prepend-icon="map"
         single-line
       ></v-select>
       <v-text-field
@@ -86,7 +84,7 @@ export default {
       this.selectedReason = "";
       this.selectedStatus = "";
       this.selectedStartDate = "";
-      this.this.selectedEndDate = "";
+      this.selectedEndDate = "";
       this.getAbsences();
     },
 
