@@ -93,7 +93,7 @@ services:
     env_file:
       - ssm/develop.env
     ports:
-      - 5555:5555
+      - 5556:5555
     volumes:
       - ../ssm:/usr/src/ssm/
       - /opt/pycharm-2018.1.3/debug-eggs/:/usr/src/pycharm/debug-eggs/

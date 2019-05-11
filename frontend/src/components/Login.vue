@@ -72,7 +72,7 @@ export default {
         data => {
             this.error = null;
              this.$store.dispatch('user/setUserId', data.user)
-             this.$router.push('/UserPage');
+             this.$router.push('/Home');
              this.getUserProfile(data.user);
         },
         error => {
