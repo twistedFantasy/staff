@@ -200,6 +200,11 @@ export default {
     }
   }
 };
+
+/*
+move modal in diff component
+
+*/
 </script>
 
 <style>
@@ -237,3 +242,4 @@ export default {
   margin-top: 20px;
 }
 </style>
+

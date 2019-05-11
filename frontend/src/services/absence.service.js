@@ -51,7 +51,7 @@ export const deleteAbsence = (id) => {
   .then(user => {
     return user;
   });
-} 
+}
 
 function handleResponse(response) {
   return response.text().then(text => {
