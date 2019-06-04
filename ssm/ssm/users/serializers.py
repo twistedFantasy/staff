@@ -27,18 +27,23 @@ class ByUserSerializer(StaffByUserSerializer):
         read_only_fields = ['id', 'email', 'full_name']
 
 
-class StaffUserWithSkillsSerializer(WritableNestedModelSerializer):
-    from ssm.skills.serializers import SkillOnlyAsNameSerializer
+class StaffUserSerializer(WritableNestedModelSerializer):
     email = EmailField(required=False)
-    skills = SkillOnlyAsNameSerializer(many=True, required=False)
 
     class Meta:
         model = User
         fields = [
             'id', 'email', 'is_staff', 'full_name', 'date_of_birth', 'education', 'phone_number', 'phone_number2',
-            'has_card', 'has_key', 'skype', 'skills',
+            'has_card', 'has_key', 'skype',
         ]
-        read_only_fields = []
+
+
+class StaffUserWithSkillsSerializer(StaffUserSerializer):
+    from ssm.skills.serializers import SkillOnlyAsNameSerializer
+    skills = SkillOnlyAsNameSerializer(many=True, required=False)
+
+    class Meta(StaffUserSerializer.Meta):
+        fields = StaffUserSerializer.Meta.fields + ['skills']
 
     @transaction.atomic
     def update(self, instance, validated_data):
@@ -58,7 +63,18 @@ class StaffUserWithSkillsSerializer(WritableNestedModelSerializer):
         return instance
 
 
-class UserWithSkillsSerializer(StaffUserWithSkillsSerializer):
+class UserSerializer(WritableNestedModelSerializer):
+
+    class Meta:
+        model = User
+        fields = [
+            'id', 'email', 'is_staff', 'full_name', 'date_of_birth', 'education', 'phone_number', 'phone_number2',
+            'has_card', 'has_key', 'skype',
+        ]
+        read_only_fields = ['email', 'is_staff', 'has_card', 'has_key']
+
+
+class UserWithSkillsSerializer(StaffUserWithSkillsSerializer, UserSerializer):
     email = EmailField(required=False, read_only=True)
 
     class Meta(StaffUserWithSkillsSerializer.Meta):

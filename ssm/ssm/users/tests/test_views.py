@@ -18,7 +18,7 @@ class SSMTokenObtainTestCase(BaseTestCase):
         assert decoded['token_type'] == 'access'
         assert decoded['user_id'] == self.staff_user.id
         self.client.credentials(HTTP_AUTHORIZATION=f'JWT {token}')
-        response = self.client.get(reverse('user-detail', args=[self.staff_user.id]))
+        response = self.client.get(reverse('user-detail', args=[self.staff_user.id]), {'skills': True})
         assert response.status_code == HTTP_200_OK
         assert all([key in response.data for key in StaffUserWithSkillsSerializer.Meta.fields])
 
@@ -40,13 +40,24 @@ class SSMTokenObtainTestCase(BaseTestCase):
         assert decoded['token_type'] == 'access'
         assert decoded['user_id'] == self.simple_user.id
         self.client.credentials(HTTP_AUTHORIZATION=f'JWT {token}')
-        response = self.client.get(reverse('user-detail', args=[self.simple_user.id]))
+        response = self.client.get(reverse('user-detail', args=[self.simple_user.id]), {'skills': True})
         assert response.status_code == HTTP_200_OK
         assert all([key in response.data for key in UserWithSkillsSerializer.Meta.fields])
 
 
 class UserViewSetTestCase(BaseTestCase):
     endpoint = 'user-list'
+
+    @classmethod
+    def setUpTestData(cls):
+        from ssm.skills.models import Skill
+        cls.skill1 = Skill.objects.create(name='python')
+        cls.skill2 = Skill.objects.create(name='golang')
+        Skill.objects.create(name='postgresql')
+        Skill.objects.create(name='mysql')
+        Skill.objects.create(name='mongodb')
+        Skill.objects.create(name='aws')
+        Skill.objects.create(name='gcloud')
 
     def test_permission_classes__staff_allow_to_use_any_rest_method(self):
         self.client.force_authenticate(self.staff_user)
@@ -119,7 +130,7 @@ class UserViewSetTestCase(BaseTestCase):
         response = self.client.delete(reverse('user-detail', args=[self.staff_user.id]))
         assert response.status_code == HTTP_403_FORBIDDEN
 
-    def test_get_serializer_class__staff_user(self):
+    def test_get_serializer_class__staff_user_allow_to_modify_all_fields(self):
         data = {'email': 'staff.new@gmail.com', 'is_staff': True, 'has_card': True, 'has_key': True}
         assert self.simple_user.email != data['email']
         assert not self.simple_user.is_staff
@@ -132,7 +143,7 @@ class UserViewSetTestCase(BaseTestCase):
         assert response.data['has_card']
         assert response.data['has_key']
 
-    def test_get_serializer_class_non_staff_user(self):
+    def test_get_serializer_class_non_staff_user_allow_to_modify_non_read_only_fields(self):
         data = {'email': 'non-staf.new@gmail.com', 'is_staff': True, 'has_card': True, 'has_key': True}
         assert self.simple_user.email != data['email']
         assert not self.simple_user.is_staff
@@ -144,6 +155,40 @@ class UserViewSetTestCase(BaseTestCase):
         assert not response.data['is_staff']
         assert not response.data['has_card']
         assert not response.data['has_key']
+
+    def test_get_serializer_class__staff_without_skills(self):
+        self.client.force_authenticate(self.staff_user)
+        response = self.client.get(reverse('user-list'))
+        assert response.status_code == HTTP_200_OK
+        assert len(response.data['results']) == 2
+        assert all('skills' not in value for value in response.data['results'])
+
+    def test_get_serializer_class__staff_with_skills(self):
+        from ssm.skills.models import UserSkillModel
+        UserSkillModel.objects.create(user=self.staff_user, skill=self.skill1)
+        UserSkillModel.objects.create(user=self.simple_user, skill=self.skill2)
+        self.client.force_authenticate(self.staff_user)
+        response = self.client.get(reverse('user-list'), {'skills': True})
+        assert len(response.data['results']) == 2
+        assert all('skills' in value for value in response.data['results'])
+        assert all(len(value['skills']) == 1 for value in response.data['results'])
+
+    def test_get_serializer_class__non_staff_without_users(self):
+        self.client.force_authenticate(self.simple_user)
+        response = self.client.get(reverse('user-list'))
+        assert response.status_code == HTTP_200_OK
+        assert len(response.data['results']) == 1
+        assert all('skills' not in value for value in response.data['results'])
+
+    def test_get_serializer_class__non_staff_with_users(self):
+        from ssm.skills.models import UserSkillModel
+        UserSkillModel.objects.create(user=self.simple_user, skill=self.skill1)
+        UserSkillModel.objects.create(user=self.simple_user, skill=self.skill2)
+        self.client.force_authenticate(self.simple_user)
+        response = self.client.get(reverse('user-list'), {'skills': True})
+        assert len(response.data['results']) == 1
+        assert all('skills' in value for value in response.data['results'])
+        assert all(len(value['skills']) == 2 for value in response.data['results'])
 
 
 class ChangePasswordTestCase(BaseTestCase):

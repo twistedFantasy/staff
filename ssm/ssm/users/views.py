@@ -10,9 +10,9 @@ from rest_framework.status import HTTP_200_OK, HTTP_404_NOT_FOUND
 
 from ssm.users.models import User, Absence, Assessment, ABSENCE_STATUS, ABSENCE_BLOCKED_STATUSES
 from ssm.users.filters import UserFilter, UserFilterBackend, AbsenceFilter
-from ssm.users.serializers import StaffUserWithSkillsSerializer, UserWithSkillsSerializer, \
-    SSMTokenObtainPairSerializer, AbsenceSerializer, StaffAbsenceSerializer, StaffAssessmentSerializer, \
-    AssessmentSerializer
+from ssm.users.serializers import StaffUserSerializer, UserSerializer, StaffUserWithSkillsSerializer, \
+    UserWithSkillsSerializer, SSMTokenObtainPairSerializer, AbsenceSerializer, StaffAbsenceSerializer, \
+    StaffAssessmentSerializer, AssessmentSerializer
 from ssm.users.permissions import AbsenceCustomIsAllowedMethodOrStaff, UserCustomIsAllowedMethodOrStaff, \
     IsCurrentUserOrStaff
 from ssm.core.filters import ObjectFieldFilterBackend
@@ -34,8 +34,10 @@ class UserViewSet(ModelViewSet):
     ordering_fields = ['email', 'full_name']
     ordering = ['email']
 
-    def get_serializer_class(self): # FIXME: param to return with skills or not
-        return StaffUserWithSkillsSerializer if self.request.user.is_staff else UserWithSkillsSerializer
+    def get_serializer_class(self):
+        if 'skills' in self.request.query_params:
+            return StaffUserWithSkillsSerializer if self.request.user.is_staff else UserWithSkillsSerializer
+        return StaffUserSerializer if self.request.user.is_staff else UserSerializer
 
 
 class ChangePasswordView(APIView):

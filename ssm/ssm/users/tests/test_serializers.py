@@ -13,10 +13,12 @@ class UserWithSkillsSerializerTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
         self.skill = Skill.objects.create(name='python')
-        self.staff_user2 = User.objects.create_user('UserWithSkills@gmail.com', 'password')
+        self.staff_user2 = User.objects.create_user('UserWithSkills.Staff@gmail.com', 'password')
+        self.simple_user2 = User.objects.create_user('UserWithSkills@gmail.com', 'password')
         UserSkillModel.objects.create(user=self.staff_user2, skill=self.skill)
+        UserSkillModel.objects.create(user=self.simple_user2, skill=self.skill)
 
-    def test_staff_serializer_skills_update__initial_empty_list_to_one_skill(self):
+    def test_staff_serializer_with_skills__update__initial_empty_list_to_one_skill(self):
         serializer = StaffUserWithSkillsSerializer(self.staff_user)
         assert not serializer.data['skills']
         serializer = StaffUserWithSkillsSerializer(self.staff_user, data={'skills': [{'name': 'python'}]})
@@ -25,7 +27,7 @@ class UserWithSkillsSerializerTestCase(BaseTestCase):
         serializer = StaffUserWithSkillsSerializer(user)
         assert serializer.data['skills'] == [{'name': 'python'}]
 
-    def test__staff_serializer_skills_update__initial_empty_list_to_three_skills(self):
+    def test__staff_serializer_with_skills__update__initial_empty_list_to_three_skills(self):
         serializer = StaffUserWithSkillsSerializer(self.staff_user)
         assert not serializer.data['skills']
         data = {'skills': [{'name': 'postgresql'}, {'name': 'mysql'}]}
@@ -36,7 +38,7 @@ class UserWithSkillsSerializerTestCase(BaseTestCase):
         assert len(serializer.data['skills']) == 2
         assert all(skill['name'] in ['postgresql', 'mysql'] for skill in serializer.data['skills'])
 
-    def test__staff_serializer_skills_update__initial_one_skill_add_one_more_new(self):
+    def test__staff_serializer_with_skills__update__initial_one_skill_add_one_more_new(self):
         serializer = StaffUserWithSkillsSerializer(self.staff_user2)
         assert serializer.data['skills']
         data = {'skills': [{'name': 'python'}, {'name': 'golang'}]}
@@ -47,7 +49,7 @@ class UserWithSkillsSerializerTestCase(BaseTestCase):
         assert len(serializer.data['skills']) == 2
         assert all(skill['name'] in ['python', 'golang'] for skill in serializer.data['skills'])
 
-    def test__staff_serializer_skills_update__initial_one_skill_add_one_more_but_the_same(self):
+    def test__staff_serializer_with_skills__update__initial_one_skill_add_one_more_but_the_same(self):
         serializer = StaffUserWithSkillsSerializer(self.staff_user2)
         assert serializer.data['skills']
         data = {'skills': [{'name': 'python'}, {'name': 'python'}]}
@@ -56,7 +58,7 @@ class UserWithSkillsSerializerTestCase(BaseTestCase):
         with pytest.raises(IntegrityError):
             serializer.save()
 
-    def test_skills_update__initial_one_skill_add_one_more_new_and_delete_previous(self):
+    def test_staff_serializer_with_skills__update__initial_one_skill_add_one_more_new_and_delete_previous(self):
         serializer = StaffUserWithSkillsSerializer(self.staff_user2)
         assert serializer.data['skills']
         serializer = StaffUserWithSkillsSerializer(self.staff_user2, data={'skills': [{'name': 'golang'}]})
@@ -66,7 +68,7 @@ class UserWithSkillsSerializerTestCase(BaseTestCase):
         assert len(serializer.data['skills']) == 1
         assert serializer.data['skills'][0]['name'] == 'golang'
 
-    def test_skills_update__initial_one_skill_add_one_more_with_wrong_format(self):
+    def test_staff_seriazlier_with_skills__update__initial_one_skill_add_one_more_with_wrong_format(self):
         serializer = StaffUserWithSkillsSerializer(self.staff_user2)
         assert serializer.data['skills']
         serializer = StaffUserWithSkillsSerializer(self.staff_user2, data={'skills': [{'nameZ': 'golang'}]})
@@ -74,7 +76,7 @@ class UserWithSkillsSerializerTestCase(BaseTestCase):
         with pytest.raises(AssertionError):
             serializer.save()
 
-    def test__staff_serializer_skills_update__initial_one_skill_remove_all_skills(self):
+    def test__staff_serializer_with_skills__update__initial_one_skill_remove_all_skills(self):
         serializer = StaffUserWithSkillsSerializer(self.staff_user2)
         assert serializer.data['skills']
         serializer = StaffUserWithSkillsSerializer(self.staff_user2, data={'skills': []})
@@ -83,7 +85,7 @@ class UserWithSkillsSerializerTestCase(BaseTestCase):
         serializer = StaffUserWithSkillsSerializer(user)
         assert not serializer.data['skills']
 
-    def test_user_serializer__read_only_fields(self):
+    def test_non_staff_serializer__read_only_fields(self):
         assert not self.simple_user.is_staff
         assert not self.simple_user.has_card
         assert not self.simple_user.has_key
@@ -95,3 +97,14 @@ class UserWithSkillsSerializerTestCase(BaseTestCase):
         assert not user.is_staff
         assert not user.has_card
         assert not user.has_key
+
+    def test__non_staff_serializer_with_skills__update__initial_one_skill_add_one_more_new(self):
+        serializer = UserWithSkillsSerializer(self.simple_user2)
+        assert serializer.data['skills']
+        data = {'skills': [{'name': 'python'}, {'name': 'golang'}]}
+        serializer = UserWithSkillsSerializer(self.simple_user2, data=data)
+        assert serializer.is_valid()
+        user = serializer.save()
+        serializer = UserWithSkillsSerializer(user)
+        assert len(serializer.data['skills']) == 2
+        assert all(skill['name'] in ['python', 'golang'] for skill in serializer.data['skills'])

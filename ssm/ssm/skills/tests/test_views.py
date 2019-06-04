@@ -1,5 +1,5 @@
 from django.urls import reverse
-from rest_framework import status
+from rest_framework.status import HTTP_200_OK
 
 from ssm.skills.models import Skill, UserSkillModel
 from ssm.core.tests import BaseTestCase
@@ -26,7 +26,7 @@ class SkillTestCase(BaseTestCase):
     def test_get_serializer_class__staff_without_users(self):
         self.client.force_authenticate(self.staff_user)
         response = self.client.get(reverse('skill-list'))
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == HTTP_200_OK
         assert len(response.data['results']) == 7
         assert all('users' not in value for value in response.data['results'])
 
@@ -40,7 +40,7 @@ class SkillTestCase(BaseTestCase):
     def test_get_serializer_class__non_staff_without_users(self):
         self.client.force_authenticate(self.simple_user)
         response = self.client.get(reverse('skill-list'))
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == HTTP_200_OK
         assert len(response.data['results']) == 1
         assert all('users' not in value for value in response.data['results'])
 
