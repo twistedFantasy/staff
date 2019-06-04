@@ -10,10 +10,14 @@ from ssm.users.views import UserViewSet, ChangePasswordView, SSMTokenObtainPairV
 from ssm.skills.views import SkillViewSet
 from ssm.absences.views import AbsenceViewSet
 from ssm.projects.views import ProjectViewSet
+from ssm.assessments.views import AssessmentViewSet
+from ssm.events.views import EventViewSet
+from ssm.faq.views import FAQViewSet
+from ssm.vacancies.views import VacancyViewSet
 
 
 admin.autodiscover()
-suffix = '' if settings.ENV == 'prd' else ' %s' % settings.ENV.upper()
+suffix = '' if settings.ENV == 'prd' else f' {settings.ENV.upper()}'
 admin.site.site_header = settings.NAME + suffix
 admin.site.site_title = settings.NAME + suffix
 
@@ -22,6 +26,10 @@ router.register(r'users', UserViewSet)
 router.register(r'skills', SkillViewSet)
 router.register(r'absences', AbsenceViewSet)
 router.register(r'projects', ProjectViewSet)
+router.register(r'assessments', AssessmentViewSet)
+router.register(r'events', EventViewSet)
+router.register(r'faq', FAQViewSet)
+router.register(r'vacancies', VacancyViewSet)
 
 urlpatterns = [
     # built-in

@@ -3,10 +3,8 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 
 from ssm.skills.models import UserSkillModel
-from ssm.projects.models import MembersModel, Project
+from ssm.projects.models import MembersModel
 from ssm.users.models import User
-from ssm.users.tasks.assessment import Assessment
-from ssm.core.decorators import message_user
 
 
 class UserSkillInline(admin.TabularInline):
@@ -30,7 +28,6 @@ class UserAdmin(UserAdmin):
             'education', 'phone_number', 'phone_number2', 'has_card', 'has_key', 'skype',
             'working_hours',
         ]}),
-        ('Assessment', {'fields': ['assessment_date', 'assessment_plan']}),
         ('Permissions', {'fields': ['is_active', 'is_staff', 'is_superuser']}),
         ('System', {'classes': ['collapse'], 'fields': ['created', 'modified']}),
     ]
@@ -45,12 +42,6 @@ class UserAdmin(UserAdmin):
     filter_horizontal = []
     show_full_result_count = False
     actions = ['notify_users']
-    list_filter = ['is_customer']
-
-    @message_user("Notified!")
-    def notify_users(self, request, queryset):
-        Assessment.delay()
-    notify_users.short_description = 'Notify employers about assessment'
 
 
 admin.site.register(User, UserAdmin)

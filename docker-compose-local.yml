@@ -1,0 +1,100 @@
+version: '3.7'
+
+networks:
+  network:
+    driver: bridge
+
+volumes:
+  ssm-data:
+  redis-data:
+  portainer-data:
+  ssm-postgres-data:
+
+services:
+  ssm:
+    build:
+      context: ./
+      dockerfile: ssm/docker/Dockerfile.local
+      args:
+         IMAGE: "python:3.7.3"
+         APP_PATH: "/usr/src/ssm/"
+         DATA_PATH: "/var/ssm/data/"
+         SCRIPTS_PATH: "/usr/src/scripts"
+    restart: on-failure
+    env_file:
+      - ssm/docker/env/local.env
+    ports:
+      - 8000:8000
+    volumes:
+      - ./ssm:/usr/src/ssm/
+      - ssm-data:/var/ssm/data/
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - network
+
+  supervisor:
+    build:
+      context: ./
+      dockerfile: ssm/docker/Dockerfile.local
+      args:
+          IMAGE: "python:3.7.3"
+          APP_PATH: "/usr/src/ssm/"
+          DATA_PATH: "/var/ssm/data/"
+          SCRIPTS_PATH: "/usr/src/scripts"
+    command: /usr/local/bin/supervisord -c /etc/supervisord.conf
+    restart: on-failure
+    env_file:
+      - ssm/docker/env/local.env
+    volumes:
+      - ./ssm:/usr/src/ssm/
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - network
+
+  cron:
+    build:
+      context: ./
+      dockerfile: ssm/docker/Dockerfile.cron
+      args:
+        IMAGE: "python:3.7.3"
+        APP_PATH: "/usr/src/ssm/"
+        CRON_PATH: "/etc/cron.d/"
+    restart: on-failure
+    env_file:
+      - ssm/docker/env/local.env
+    volumes:
+      - ./ssm:/usr/src/ssm/
+    networks:
+      - network
+
+  postgres:
+    image: "postgres:11.3-alpine"
+    env_file:
+      - ssm/docker/env/local.env
+    ports:
+      - 8998:5432
+    volumes:
+      - ssm-postgres-data:/var/lib/postgresql/data
+    networks:
+      - network
+
+  redis:
+    image: "redis:5.0.5-alpine"
+    volumes:
+      - redis-data:/data
+    networks:
+      - network
+
+  portainer:
+    image: portainer/portainer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer-data:/data
+    ports:
+      - "8897:9000"
+    networks:
+      - network

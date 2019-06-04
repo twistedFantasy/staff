@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
+# See https://docs.djangoproject.com/en/2.1/hSIMPLE_JWTowto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'nda)q)yyg@fse_ugenqof9h0^_atj)6+xc&lm@v7yi+1gbmplk'
@@ -52,12 +52,16 @@ INSTALLED_APPS = [
     'rest_framework_filters',
 
     # ssm
+    'ssm.absences',
+    'ssm.assessments',
     'ssm.core.apps.Config',
     'ssm.core',
-    'ssm.users',
-    'ssm.absences',
-    'ssm.skills',
+    'ssm.events',
+    'ssm.faq',
     'ssm.projects',
+    'ssm.skills',
+    'ssm.users',
+    'ssm.vacancies',
 ]
 
 MIDDLEWARE = [
@@ -177,13 +181,13 @@ CELERY_TASK_QUEUES = {
     },
 }
 CELERY_TASK_ROUTES = {
-    "ssm.users.tasks.assessment.Assessment": {
+    "ssm.users.tasks.example.ExampleTask": {
         "queue": "celery-general",
-        "routing_key": "general.assessment",
+        "routing_key": "general.example",
     },
 }
 CELERY_IMPORTS = [
-    "ssm.users.tasks.assessment",
+    "ssm.users.tasks.example",
 ]
 
 # auth
@@ -245,10 +249,17 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.redirects.RedirectsPanel',
 ]
 
-# assessment
-ASSESSMENT_NOTIFIER = 10
+# notifications
+BIRTHDAY_SUBJECT = "Happy Birthday!"
+BIRTHDAY_MESSAGE = "Hey! Happy Birthday from Codex-Soft, be the best!"
 ASSESSMENT_SUBJECT = "Assessment reminder"
-ASSESSMENT_TEXT = "Hey, just a friendly reminder, assessment is so close, here is our discussed and approved plan: %s. Are you ready?"
+ASSESSMENT_MESSAGE = "Hey, just a friendly reminder, assessment is today. Are you ready?"
 
 MEDIA_ROOT = '/var/ssm/data/'
 MEDIA_URL = '/media/'
+
+# tests
+TEST_STAFFUSER_EMAIL = 'test.staffuser@gmail.com'
+TEST_STAFFUSER_PASSWORD = 'test.staffuser.password'
+TEST_SIMPLEUSER_EMAIL = 'test.simpleuser@gmail.com'
+TEST_SIMPLEUSER_PASSWORD = 'test.simpleuser.password'

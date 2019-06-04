@@ -1,15 +1,19 @@
 from django.db import models
-from django.contrib import admin
 from model_utils.choices import Choices
 
-from ssm.core.models import BaseModel
 from ssm.users.models import User
+from ssm.core.models import BaseModel
+from ssm.core.helpers import cleanup
 
-STATUS = Choices(('started', 'Started'), ('in progress', 'In progress'), ('completed', 'Completed'))
-ROLES = Choices(('project manager', 'Project manager'), ('developer', 'Developer'), ('tester', 'Tester'),
-                ('business analyst', 'Business analyst'), ('front-end developer', 'Front-end developer'),
-                ('back-end developer', 'Back-end developer'), ('data scientist', 'Data scientist'),
-                ('designer', 'Designer'), ('team lead', 'Team lead'), ('product owner', 'Product owner'))
+STATUS = Choices(
+    ('waiting', 'waiting'), ('in progress', 'In progress'), ('completed', 'Completed'), ('failed', 'Failed')
+)
+ROLES = Choices((
+    'project_manager', 'Project manager'), ('developer', 'Developer'), ('tester', 'Tester'),
+    ('business_analyst', 'Business Analyst'), ('frontend_developer', 'Front-end Developer'),
+    ('backend_developer', 'Back-end Developer'), ('data_scientist', 'Data Scientist'),
+    ('designer', 'Designer'), ('team_lead', 'Team Lead'), ('product_owner', 'Product Owner')
+)
 
 
 def directory_path(instance, filename):
@@ -21,18 +25,17 @@ class Project(BaseModel):
     name = models.CharField('Name', max_length=32, unique=True)
     description = models.TextField('Description', null=True, blank=True)
     specification = models.FileField('Specification', upload_to=directory_path, null=True, blank=True)
-    customer = models.ForeignKey(User, on_delete=models.DO_NOTHING, verbose_name='Customer', null=True, blank=True)
     start_date = models.DateField('Start Date', null=True, blank=True)
     end_date = models.DateField('End Date', null=True, blank=True)
-    status = models.CharField('Status', max_length=32, choices=STATUS, default=STATUS.started)
+    status = models.CharField('Status', max_length=32, choices=STATUS, default=STATUS.waiting)
     members = models.ManyToManyField(User, through='MembersModel', related_name='members')
-    estimation_in_man_hours = models.IntegerField('Time Estimation In Man-hours', null=True, blank=True)
+    estimation_in_man_hours = models.IntegerField('Estimation In Man-hours', null=True, blank=True)
 
     def __str__(self):
-        return '%s (project %s)' % (self.name, self.id)
+        return f'{self.name} (project {self.id})'
 
     def save(self, *args, **kwargs):
-        self.name = self.name.lower().strip()
+        self.name = cleanup(self.name)
         super().save(*args, **kwargs)
 
     class Meta:

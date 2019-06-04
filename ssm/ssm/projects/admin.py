@@ -8,15 +8,14 @@ class MembersInline(admin.TabularInline):
 
 
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ['name', 'status', 'customer', 'get_members_count']
+    list_display = ['name', 'status', 'get_members_count']
     search_fields = ['name']
     fieldsets = [
-        (None, {'fields': ['name', 'customer', 'description']}),
+        (None, {'fields': ['name', 'description']}),
         ('Details', {'fields': ['status', 'estimation_in_man_hours', 'specification']}),
         ('Duration', {'fields': ['start_date', 'end_date']}),
     ]
     inlines = [MembersInline]
-    list_filter = ['customer']
 
     def get_members_count(self, obj):
         return obj.members.filter(membersmodel__left_date=None).count()

@@ -8,9 +8,9 @@ from rest_framework.status import HTTP_200_OK, HTTP_404_NOT_FOUND
 
 from ssm.users.models import User
 from ssm.users.filters import UserFilter
-from ssm.users.serializers import UserWithSkillsSerializer, SSMTokenObtainPairSerializer
-from ssm.users.permissions import IsCurrentUserOrStaff
-from ssm.core.permissions import ReadOnlyOrStaff
+from ssm.users.serializers import StaffUserWithSkillsSerializer, UserWithSkillsSerializer, \
+    SSMTokenObtainPairSerializer
+from ssm.users.permissions import CustomIsAllowedMethodOrStaff, IsCurrentUserOrStaff
 from ssm.core.filters import ObjectFieldFilterBackend
 from ssm.core.views import CustomTokenObtainPairView
 
@@ -22,13 +22,15 @@ class SSMTokenObtainPairView(CustomTokenObtainPairView):
 
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all().prefetch_related('skills')
-    serializer_class = UserWithSkillsSerializer
-    permission_classes = [IsAuthenticated, ReadOnlyOrStaff, IsCurrentUserOrStaff]
+    permission_classes = [IsAuthenticated, CustomIsAllowedMethodOrStaff, IsCurrentUserOrStaff]
     filter_backends = [ObjectFieldFilterBackend, SearchFilter, OrderingFilter, DjangoFilterBackend]
     filterset_class = UserFilter
     search_fields = ['email', 'full_name']
     ordering_fields = ['email', 'full_name']
     ordering = ['email']
+
+    def get_serializer_class(self):
+        return StaffUserWithSkillsSerializer if self.request.user.is_staff else UserWithSkillsSerializer
 
 
 class ChangePasswordView(APIView):

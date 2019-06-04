@@ -10,5 +10,5 @@ class ObjectFieldFilterBackend(BaseFilterBackend):
         is_staff = request.user.is_staff
         field = request.query_params.get(self.field) if is_staff else getattr(eval(self.object), self.field)
         if field:
-            return queryset.filter(**{'%s' % self.filter_field: field})
+            return queryset.filter(**{f'{self.filter_field}': field})
         return queryset

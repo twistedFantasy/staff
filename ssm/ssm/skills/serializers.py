@@ -13,8 +13,8 @@ class SkillSerializer(DynamicFieldsMixin, ModelSerializer):
 
 
 class SkillWithUsersSerializer(SkillSerializer):
-    from ssm.users.serializers import UserSerializer
-    users = UserSerializer(source='user_set', many=True, read_only=True)
+    from ssm.users.serializers import ByUserSerializer
+    users = ByUserSerializer(source='user_set', many=True, read_only=True)
 
     class Meta(SkillSerializer.Meta):
         fields = SkillSerializer.Meta.fields + ['users']

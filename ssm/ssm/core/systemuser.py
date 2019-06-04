@@ -3,7 +3,7 @@ import importlib
 
 import django; django.setup()
 from django.db import transaction
-models = importlib.import_module("%s.users.models" % os.environ['PROJECT'])
+models = importlib.import_module(f"{os.environ['PROJECT']}.users.models")
 
 if os.environ['SYSTEM_EMAIL'] and os.environ['SYSTEM_PASSWORD']:
     if not models.User.objects.filter(email=os.environ['SYSTEM_EMAIL']).exists():

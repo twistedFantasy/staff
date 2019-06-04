@@ -1,7 +1,18 @@
 from django.db import models
+from django.conf import settings
+from django.core.mail import send_mail
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 from ssm.core.models import BaseModel
+from ssm.core.helpers import today, format
+
+
+BIRTHDAY = 'birthday'
+ASSESSMENT = 'assessment'
+NOTIFICATIONS = {
+    BIRTHDAY: {'subject': settings.BIRTHDAY_SUBJECT, 'text': settings.BIRTHDAY_MESSAGE},
+    ASSESSMENT: {'subject': settings.ASSESSMENT_SUBJECT, 'text': settings.ASSESSMENT_MESSAGE},
+}
 
 
 class UserManager(BaseUserManager):
@@ -35,6 +46,10 @@ class User(AbstractBaseUser, BaseModel):
     is_staff = models.BooleanField('Is Staff', default=False, db_index=True)
     is_superuser = models.BooleanField('Is Superuser', default=False, db_index=True)
 
+    # notifications
+    birthday_notification = models.DateField('Birthday Notification', null=True, blank=True)
+    assessment_notification = models.DateField('Assessment Notification', null=True, blank=True)
+
     # metadata
     full_name = models.CharField('Full Name', max_length=256, default='', blank=True)
     ld_number = models.IntegerField('L/D Number', null=True, blank=True)
@@ -49,14 +64,7 @@ class User(AbstractBaseUser, BaseModel):
     has_key = models.BooleanField('Has Key', default=False)
     skype = models.CharField('Skype', max_length=32, null=True, blank=True)
     working_hours = models.IntegerField('Working Hours', default=8)
-    skills = models.ManyToManyField('Skill', through='UserSkillModel')
-
-    # assessment
-    assessment_date = models.DateField('Assessment Date', null=True, blank=True)
-    assessment_plan = models.TextField('Assessment Plan', null=True, blank=True)
-
-    # project
-    is_customer = models.BooleanField('Is customer', null=False, blank=False, default=False)
+    skills = models.ManyToManyField('skills.Skill', through='skills.UserSkillModel')
 
     objects = UserManager()
 
@@ -69,7 +77,7 @@ class User(AbstractBaseUser, BaseModel):
         ordering = ['-modified']
 
     def __str__(self):
-        return u'%s (user %s)' % (self.get_full_name(), self.id)
+        return f'{self.get_full_name()} (user {self.id})'
 
     def get_full_name(self):
         return self.full_name
@@ -82,3 +90,20 @@ class User(AbstractBaseUser, BaseModel):
 
     def has_module_perms(self, app_label):
         return True
+
+    def is_birthday(self):
+        date_of_birth = format(self.date_of_birth.date()) if self.date_of_birth else None
+        birthday_notification = format(self.birthday_notification.date()) if self.birthday_notification else None
+        return date_of_birth == format(today()) and birthday_notification != format(today())
+
+    def is_assessment(self):
+        from ssm.assessments.models import Assessment
+        assessment_notificaiton = format(self.assessment_notification) if self.assessment_notification else None
+        return Assessment.objects.filter(user=self, end_date=today()) and \
+            assessment_notificaiton != format(today())
+
+    def notify(self, notification):
+        if notification not in NOTIFICATIONS:
+            raise Exception('Unknown notification type')
+        subject, text = NOTIFICATIONS[notification]['subject'], NOTIFICATIONS[notification]['text']
+        send_mail(subject, text, settings.DEFAULT_FROM_EMAIL, [self.email])
