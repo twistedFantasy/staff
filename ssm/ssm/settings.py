@@ -52,12 +52,9 @@ INSTALLED_APPS = [
     'rest_framework_filters',
 
     # ssm
-    'ssm.absences',
-    'ssm.assessments',
     'ssm.core.apps.Config',
     'ssm.core',
     'ssm.events',
-    'ssm.faq',
     'ssm.projects',
     'ssm.skills',
     'ssm.users',

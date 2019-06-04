@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.core.mail import send_mail
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from model_utils.choices import Choices
 
 from ssm.core.models import BaseModel
 from ssm.core.helpers import today, format
@@ -13,6 +14,11 @@ NOTIFICATIONS = {
     BIRTHDAY: {'subject': settings.BIRTHDAY_SUBJECT, 'text': settings.BIRTHDAY_MESSAGE},
     ASSESSMENT: {'subject': settings.ASSESSMENT_SUBJECT, 'text': settings.ASSESSMENT_MESSAGE},
 }
+ABSENCE_STATUS = Choices(('new', 'New'), ('veryfing', 'Verifying'), ('approved', 'Approved'), ('rejected', 'Rejected'))
+ABSENCE_REASON = Choices(('vacation', 'Vacation'), ('illness', 'Illness'), ('holiday', 'Holiday'), ('other', 'Other'))
+ABSENCE_BLOCKED_STATUSES = [ABSENCE_STATUS.approved, ABSENCE_STATUS.rejected]
+ABSENCE_RELATED_NAME = 'absences_approved_by'
+ASSESSMENT_STATUS = Choices(('new', 'New'), ('in_progress', 'In progress'), ('completed', 'Completed'), ('failed', 'Failed'))
 
 
 class UserManager(BaseUserManager):
@@ -107,3 +113,39 @@ class User(AbstractBaseUser, BaseModel):
             raise Exception('Unknown notification type')
         subject, text = NOTIFICATIONS[notification]['subject'], NOTIFICATIONS[notification]['text']
         send_mail(subject, text, settings.DEFAULT_FROM_EMAIL, [self.email])
+
+
+class Absence(BaseModel):
+    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
+    reason = models.CharField('Reason', max_length=32, choices=ABSENCE_REASON, default=ABSENCE_REASON.other)
+    status = models.CharField('Status', max_length=32, choices=ABSENCE_STATUS, default=ABSENCE_STATUS.new)
+    approved_by = models.ForeignKey(User, related_name=ABSENCE_RELATED_NAME, null=True, blank=True,
+        on_delete=models.SET_NULL)
+    start_date = models.DateField('Start Date')
+    end_date = models.DateField('End Date')
+    notes = models.TextField('Notes', null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.id} (absences {self.user.id if self.user else "unknown"})'
+
+    class Meta:
+        app_label = 'users'
+        verbose_name_plural = 'Absences'
+        ordering = ['-id']
+
+
+class Assessment(BaseModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    decision_by = models.ForeignKey(User, related_name='assessments_decision_by', null=True, blank=True,
+        on_delete=models.SET_NULL)
+    status = models.CharField('Status', max_length=32, choices=ASSESSMENT_STATUS, default=ASSESSMENT_STATUS.in_progress)
+    start_date = models.DateTimeField('Start Date', null=True, blank=True)
+    end_date = models.DateTimeField('End Date', null=True, blank=True)
+    plan = models.TextField('Plan', null=True, blank=True)
+    comments = models.TextField('Comments', null=True, blank=True)
+    internal_notes = models.TextField('Internal Notes', null=True, blank=True)
+
+    class Meta:
+        app_label = 'users'
+        verbose_name_plural = 'Assessments'
+        ordering = ['-id']

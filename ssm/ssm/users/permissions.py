@@ -3,8 +3,12 @@ from rest_framework.permissions import BasePermission
 from ssm.core.permissions import IsAllowedMethodOrStaff
 
 
-class CustomIsAllowedMethodOrStaff(IsAllowedMethodOrStaff):
+class UserCustomIsAllowedMethodOrStaff(IsAllowedMethodOrStaff):
     methods = ['GET', 'HEAD', 'OPTIONS', 'PATCH']
+
+
+class AbsenceCustomIsAllowedMethodOrStaff(IsAllowedMethodOrStaff):
+    methods = ['GET', 'HEAD', 'OPTIONS', 'POST', 'PATCH', 'DELETE']
 
 
 class IsCurrentUserOrStaff(BasePermission):

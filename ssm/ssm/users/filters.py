@@ -1,6 +1,6 @@
 from django_filters.rest_framework import FilterSet, CharFilter
 
-from ssm.users.models import User
+from ssm.users.models import User, Absence
 from ssm.core.filters import ObjectFieldFilterBackend
 
 
@@ -14,3 +14,10 @@ class UserFilter(FilterSet):
 
 class UserFilterBackend(ObjectFieldFilterBackend):
     filter_field = 'user_id'
+
+
+class AbsenceFilter(FilterSet):
+
+    class Meta:
+        model = Absence
+        fields = ['reason', 'status', 'start_date', 'end_date']

@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group
 
 from ssm.skills.models import UserSkillModel
 from ssm.projects.models import MembersModel
-from ssm.users.models import User
+from ssm.users.models import User, Absence, Assessment
 
 
 class UserSkillInline(admin.TabularInline):
@@ -44,5 +44,27 @@ class UserAdmin(UserAdmin):
     actions = ['notify_users']
 
 
+class AbsenseAdmin(admin.ModelAdmin):
+    list_display = ['reason', 'status', 'user', 'start_date', 'end_date']
+    search_fields = ['start_date', 'end_date']
+    fieldsets = [
+        (None, {'fields': ['approved_by']}),
+        ('Details', {'fields': ['user', 'reason', 'status', 'start_date', 'end_date', 'notes']})
+    ]
+    filter_horizontal = []
+
+
+class AssessmentAdmin(admin.ModelAdmin):
+    list_display = ['user', 'status', 'start_date', 'end_date']
+    search_fields = ['start_date', 'end_date']
+    fieldsets = [
+        (None, {'fields': ['decision_by']}),
+        ('Details', {'fields': ['user', 'status', 'start_date', 'end_date', 'plan', 'comments', 'internal_notes']})
+    ]
+    filter_horizontal = []
+
+
 admin.site.register(User, UserAdmin)
 admin.site.unregister(Group)
+admin.site.register(Absence, AbsenseAdmin)
+admin.site.register(Assessment, AssessmentAdmin)

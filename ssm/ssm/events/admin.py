@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from ssm.events.models import Event
+from ssm.events.models import Event, FAQ
 
 
 class EventAdmin(admin.ModelAdmin):
@@ -11,4 +11,13 @@ class EventAdmin(admin.ModelAdmin):
     ]
 
 
+class FAQAdmin(admin.ModelAdmin):
+    list_display = ['question', 'order', 'active']
+    search_fields = ['question', 'answer']
+    fieldsets = [
+        (None, {'fields': ['question', 'answer', 'order', 'active']})
+    ]
+
+
 admin.site.register(Event, EventAdmin)
+admin.site.register(FAQ, FAQAdmin)

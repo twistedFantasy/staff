@@ -6,13 +6,10 @@ from django.urls import path, include
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 
-from ssm.users.views import UserViewSet, ChangePasswordView, SSMTokenObtainPairView
+from ssm.users.views import UserViewSet, ChangePasswordView, SSMTokenObtainPairView, AbsenceViewSet, AssessmentViewSet
 from ssm.skills.views import SkillViewSet
-from ssm.absences.views import AbsenceViewSet
 from ssm.projects.views import ProjectViewSet
-from ssm.assessments.views import AssessmentViewSet
-from ssm.events.views import EventViewSet
-from ssm.faq.views import FAQViewSet
+from ssm.events.views import EventViewSet, FAQViewSet
 from ssm.vacancies.views import VacancyViewSet
 
 
