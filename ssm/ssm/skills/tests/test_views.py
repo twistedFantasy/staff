@@ -23,28 +23,28 @@ class SkillTestCase(BaseTestCase):
         UserSkillModel.objects.create(user=self.staff_user, skill=self.skill1)
         UserSkillModel.objects.create(user=self.simple_user, skill=self.skill1)
 
-    def test_get_serializer_class__staff_without_users(self):
+    def test_get_serializer_class__staff_request__skills_without_users(self):
         self.client.force_authenticate(self.staff_user)
         response = self.client.get(reverse('skill-list'))
         assert response.status_code == HTTP_200_OK
         assert len(response.data['results']) == 7
         assert all('users' not in value for value in response.data['results'])
 
-    def test_get_serializer_class__staff_with_users(self):
+    def test_get_serializer_class__staff_request__skills_with_users(self):
         self.client.force_authenticate(self.staff_user)
         response = self.client.get(reverse('skill-list'), {'users': True})
         assert len(response.data['results']) == 7
         assert all('users' in value for value in response.data['results'])
         assert any(len(value['users']) == 2 for value in response.data['results'])
 
-    def test_get_serializer_class__non_staff_without_users(self):
+    def test_get_serializer_class__non_staff_request__skills_without_users(self):
         self.client.force_authenticate(self.simple_user)
         response = self.client.get(reverse('skill-list'))
         assert response.status_code == HTTP_200_OK
         assert len(response.data['results']) == 1
         assert all('users' not in value for value in response.data['results'])
 
-    def test_get_serializer_class__non_staff_with_users(self):
+    def test_get_serializer_class__non_staff_request__skills_with_users(self):
         self.client.force_authenticate(self.simple_user)
         response = self.client.get(reverse('skill-list'), {'users': True})
         assert len(response.data['results']) == 1

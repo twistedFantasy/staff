@@ -22,27 +22,27 @@ class StaffProjectSerializer(DynamicFieldsMixin, ModelSerializer):
 
     class Meta:
         model = Project
-        fields = ['name', 'description', 'specification', 'customer', 'members']
+        fields = ['name', 'description', 'specification']
 
 
 class ProjectSerializer(StaffProjectSerializer):
 
     class Meta(StaffProjectSerializer.Meta):
         read_only_fields = [
-            'name', 'description', 'specification', 'start_date', 'end_date', 'status', 'members',
-            'estimation_in_man_hours',
+            'name', 'description', 'specification', 'start_date', 'end_date', 'status', 'estimation_in_man_hours',
         ]
 
 
 class StaffProjectWithMembersSerializer(StaffProjectSerializer):
-    members = StaffMembersSerializer(source='user_set', many=True)
+    members = StaffMembersSerializer(source='membersmodel_set', many=True)
 
     class Meta(StaffProjectSerializer.Meta):
-        pass
+        fields = StaffProjectSerializer.Meta.fields + ['members']
 
 
 class ProjectWithMembersSerialize(ProjectSerializer):
-    members = MembersSerializer(source='user_set', many=True, read_only=True)
+    members = MembersSerializer(source='membersmodel_set', many=True, read_only=True)
 
     class Meta(ProjectSerializer.Meta):
+        fields = ProjectSerializer.Meta.fields + ['members']
         read_only_fields = ProjectSerializer.Meta.read_only_fields + ['members']
