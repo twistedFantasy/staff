@@ -17,3 +17,6 @@ class FAQViewSet(ModelViewSet):
 
     def get_serializer_class(self):
         return StaffFAQSerializer if self.request.user.is_staff else FAQSerializer
+
+    def get_queryset(self):
+        return FAQ.objects.all() if self.request.user.is_staff else FAQ.objects.filter(active=True)
