@@ -4,7 +4,7 @@ from ssm.faq.models import FAQ
 
 
 class FAQAdmin(admin.ModelAdmin):
-    list_display = ['question', 'active']
+    list_display = ['question', 'order', 'active']
     search_fields = ['question', 'answer']
     fieldsets = [
         (None, {'fields': ['question', 'answer', 'order', 'active']})

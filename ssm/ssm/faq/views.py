@@ -16,4 +16,4 @@ class FAQViewSet(ModelViewSet):
     ordering_fields = ['order']
 
     def get_serializer_class(self):
-        return StaffFAQSerializer if self.request.is_staff else FAQSerializer
+        return StaffFAQSerializer if self.request.user.is_staff else FAQSerializer
