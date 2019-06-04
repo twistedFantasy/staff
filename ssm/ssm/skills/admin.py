@@ -16,7 +16,7 @@ class VerificationAdmin(admin.ModelAdmin):
     list_display = ['question', 'skill']
     search_fields = ['question']
     fieldsets = [
-        (None, {'fields': ['question', 'answer']})
+        (None, {'fields': ['skill', 'question', 'answer']})
     ]
 
 
