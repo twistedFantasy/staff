@@ -1,6 +1,6 @@
 from django.db import transaction
 
-from rest_framework.serializers import ModelSerializer, CharField, EmailField, DateField
+from rest_framework.serializers import ModelSerializer, CharField, EmailField, DateField, ListField, SlugRelatedField
 from drf_dynamic_fields import DynamicFieldsMixin
 from drf_writable_nested import WritableNestedModelSerializer
 
@@ -28,9 +28,9 @@ class ByUserSerializer(StaffByUserSerializer):
 
 
 class StaffUserWithSkillsSerializer(WritableNestedModelSerializer):
-    from ssm.skills.serializers import SkillSerializer
+    from ssm.skills.serializers import SkillOnlyAsNameSerializer
     email = EmailField(required=False)
-    skills = SkillSerializer(many=True, required=False)
+    skills = SkillOnlyAsNameSerializer(many=True, required=False)
 
     class Meta:
         model = User
@@ -45,8 +45,8 @@ class StaffUserWithSkillsSerializer(WritableNestedModelSerializer):
         from ssm.skills.models import Skill, UserSkillModel
         if 'skills' in validated_data:
             UserSkillModel.objects.filter(user=instance).delete()
-            for data in validated_data.pop('skills') or []:
-                name = cleanup(data['name'])
+            for skill in validated_data.pop('skills') or []:
+                name = cleanup(skill['name'])
                 skill = Skill.objects.filter(name=name).first()
                 if not skill:
                     skill = Skill.objects.create(name=name)
@@ -73,7 +73,7 @@ class StaffAbsenceSerializer(DynamicFieldsMixin, ModelSerializer):
 
     class Meta:
         model = Absence
-        fields = ['id', 'user', 'reason', 'status', 'approved_by', 'start_date', 'end_date', 'notes']
+        fields = '__all__'
 
 
 class AbsenceSerializer(StaffAbsenceSerializer):
@@ -89,10 +89,10 @@ class StaffAssessmentSerializer(ModelSerializer):
 
     class Meta:
         model = Assessment
-        fields = ['id', 'user', 'status', 'decision_by', 'start_date', 'end_date', 'plan', 'comments']
+        fields = '__all__'
 
 
 class AssessmentSerializer(StaffAssessmentSerializer):
 
     class Meta(StaffAssessmentSerializer.Meta):
-        read_only_fields = '__all__'
+        read_only_fields = ['user', 'status', 'decision_by', 'start_date', 'end_date', 'plan', 'comments']

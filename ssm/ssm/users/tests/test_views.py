@@ -48,32 +48,6 @@ class SSMTokenObtainTestCase(BaseTestCase):
 class UserViewSetTestCase(BaseTestCase):
     endpoint = 'user-list'
 
-    def test_serializer_class__staff_user(self):
-        data = {'email': 'staff.new@gmail.com', 'is_staff': True, 'has_card': True, 'has_key': True}
-        assert self.simple_user.email != data['email']
-        assert not self.simple_user.is_staff
-        assert not self.simple_user.has_card
-        assert not self.simple_user.has_key
-        self.client.force_authenticate(self.staff_user)
-        response = self.client.patch(reverse('user-detail', args=[self.staff_user.id]), data)
-        assert response.data['email'] == data['email']
-        assert response.data['is_staff']
-        assert response.data['has_card']
-        assert response.data['has_key']
-
-    def test_serializer_class_non_staff_user(self):
-        data = {'email': 'non-staf.new@gmail.com', 'is_staff': True, 'has_card': True, 'has_key': True}
-        assert self.simple_user.email != data['email']
-        assert not self.simple_user.is_staff
-        assert not self.simple_user.has_card
-        assert not self.simple_user.has_key
-        self.client.force_authenticate(self.simple_user)
-        response = self.client.patch(reverse('user-detail', args=[self.simple_user.id]), data)
-        assert response.data['email'] != data['email']
-        assert not response.data['is_staff']
-        assert not response.data['has_card']
-        assert not response.data['has_key']
-
     def test_permission_classes__staff_allow_to_use_any_rest_method(self):
         self.client.force_authenticate(self.staff_user)
         response = self.client.get(reverse('user-list'))
@@ -144,6 +118,32 @@ class UserViewSetTestCase(BaseTestCase):
         assert response.status_code == HTTP_403_FORBIDDEN
         response = self.client.delete(reverse('user-detail', args=[self.staff_user.id]))
         assert response.status_code == HTTP_403_FORBIDDEN
+
+    def test_get_serializer_class__staff_user(self):
+        data = {'email': 'staff.new@gmail.com', 'is_staff': True, 'has_card': True, 'has_key': True}
+        assert self.simple_user.email != data['email']
+        assert not self.simple_user.is_staff
+        assert not self.simple_user.has_card
+        assert not self.simple_user.has_key
+        self.client.force_authenticate(self.staff_user)
+        response = self.client.patch(reverse('user-detail', args=[self.staff_user.id]), data)
+        assert response.data['email'] == data['email']
+        assert response.data['is_staff']
+        assert response.data['has_card']
+        assert response.data['has_key']
+
+    def test_get_serializer_class_non_staff_user(self):
+        data = {'email': 'non-staf.new@gmail.com', 'is_staff': True, 'has_card': True, 'has_key': True}
+        assert self.simple_user.email != data['email']
+        assert not self.simple_user.is_staff
+        assert not self.simple_user.has_card
+        assert not self.simple_user.has_key
+        self.client.force_authenticate(self.simple_user)
+        response = self.client.patch(reverse('user-detail', args=[self.simple_user.id]), data)
+        assert response.data['email'] != data['email']
+        assert not response.data['is_staff']
+        assert not response.data['has_card']
+        assert not response.data['has_key']
 
 
 class ChangePasswordTestCase(BaseTestCase):

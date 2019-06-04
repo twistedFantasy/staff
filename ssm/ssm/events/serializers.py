@@ -13,7 +13,7 @@ class StaffEventSerializer(ModelSerializer):
 class EventSerializer(StaffEventSerializer):
 
     class Meta(StaffEventSerializer.Meta):
-        read_only_fields = '__all__'
+        read_only_fields = ['title', 'description', 'start_date', 'end_date', 'notify', 'to', 'active']
 
 
 class StaffFAQSerializer(ModelSerializer):
@@ -26,4 +26,4 @@ class StaffFAQSerializer(ModelSerializer):
 class FAQSerializer(StaffFAQSerializer):
 
     class Meta(StaffFAQSerializer.Meta):
-        read_only_fields = '__all__'
+        read_only_fields = ['question', 'answer', 'order', 'active']

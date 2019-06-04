@@ -18,16 +18,19 @@ class StaffProjectSerializer(DynamicFieldsMixin, ModelSerializer):
     class Meta:
         model = Project
         fields = ['name', 'description', 'specification', 'customer', 'members']
-        read_only_fields = ['id']
+        read_only_fields = []
 
 
 class MembersSerializer(StaffMembersSerializer):
 
     class Meta(StaffMembersSerializer.Meta):
-        read_only_fields = '__all__'
+        read_only_fields = ['user', 'project', 'role', 'hours_per_day', 'joined_date', 'left_date']
 
 
 class ProjectSerializer(StaffProjectSerializer):
 
     class Meta(StaffProjectSerializer.Meta):
-        read_only_fields = '_all__'
+        read_only_fields = [
+            'name', 'description', 'specification', 'start_date', 'end_date', 'status', 'members',
+            'estimation_in_man_hours',
+        ]

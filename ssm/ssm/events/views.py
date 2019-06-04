@@ -15,7 +15,7 @@ class EventViewSet(ModelViewSet):
     search_fields = ['title', 'description', 'start_date', 'end_date']
 
     def get_serializer_class(self):
-        return StaffEventSerializer if self.request.is_staff else EventSerializer
+        return StaffEventSerializer if self.request.user.is_staff else EventSerializer
 
     def get_queryset(self):
         return Event.objects.all() if self.request.user.is_staff else Event.objects.filter(active=True)

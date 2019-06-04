@@ -11,10 +11,10 @@ from ssm.core.tests import BaseTestCase
 class UserWithSkillsSerializerTestCase(BaseTestCase):
 
     def setUp(self):
+        super().setUp()
         self.skill = Skill.objects.create(name='python')
         self.staff_user2 = User.objects.create_user('UserWithSkills@gmail.com', 'password')
         UserSkillModel.objects.create(user=self.staff_user2, skill=self.skill)
-        super().setUp()
 
     def test_staff_serializer_skills_update__initial_empty_list_to_one_skill(self):
         serializer = StaffUserWithSkillsSerializer(self.staff_user)

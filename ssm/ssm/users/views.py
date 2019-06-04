@@ -34,7 +34,7 @@ class UserViewSet(ModelViewSet):
     ordering_fields = ['email', 'full_name']
     ordering = ['email']
 
-    def get_serializer_class(self):
+    def get_serializer_class(self): # FIXME: param to return with skills or not
         return StaffUserWithSkillsSerializer if self.request.user.is_staff else UserWithSkillsSerializer
 
 

@@ -19,7 +19,7 @@ class Skill(BaseModel):
         db_index=True)
 
     def __str__(self):
-        return f'{self.name} (scrape {self.id})'
+        return f'{self.name} (skill {self.id})'
 
     class Meta:
         app_label = 'skills'
