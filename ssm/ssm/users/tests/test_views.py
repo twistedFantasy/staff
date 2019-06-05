@@ -156,35 +156,59 @@ class UserViewSetTestCase(BaseTestCase):
         assert not response.data['has_card']
         assert not response.data['has_key']
 
-    def test_get_serializer_class__staff_without_skills(self):
+    def test_get_serializer_class__staff_request__without_skills(self):
         self.client.force_authenticate(self.staff_user)
-        response = self.client.get(reverse('user-list'))
+        response = self.client.get(reverse('user-list'), {'skills': False})
+        assert response.status_code == HTTP_200_OK
+        assert len(response.data['results']) == 2
+        assert all('skills' not in value for value in response.data['results'])
+        response = self.client.get(reverse('user-list'), {'skills': 'false'})
+        assert response.status_code == HTTP_200_OK
+        assert len(response.data['results']) == 2
+        assert all('skills' not in value for value in response.data['results'])
+        response = self.client.get(reverse('user-list'), {'skills': 0})
         assert response.status_code == HTTP_200_OK
         assert len(response.data['results']) == 2
         assert all('skills' not in value for value in response.data['results'])
 
-    def test_get_serializer_class__staff_with_skills(self):
+    def test_get_serializer_class__staff_request__with_skills(self):
         from ssm.skills.models import UserSkillModel
         UserSkillModel.objects.create(user=self.staff_user, skill=self.skill1)
         UserSkillModel.objects.create(user=self.simple_user, skill=self.skill2)
         self.client.force_authenticate(self.staff_user)
+        response = self.client.get(reverse('user-list'))
+        assert len(response.data['results']) == 2
+        assert all('skills' in value for value in response.data['results'])
+        assert all(len(value['skills']) == 1 for value in response.data['results'])
         response = self.client.get(reverse('user-list'), {'skills': True})
         assert len(response.data['results']) == 2
         assert all('skills' in value for value in response.data['results'])
         assert all(len(value['skills']) == 1 for value in response.data['results'])
 
-    def test_get_serializer_class__non_staff_without_users(self):
+    def test_get_serializer_class__non_staff_request__without_skills(self):
         self.client.force_authenticate(self.simple_user)
-        response = self.client.get(reverse('user-list'))
+        response = self.client.get(reverse('user-list'),  {'skills': False})
+        assert response.status_code == HTTP_200_OK
+        assert len(response.data['results']) == 1
+        assert all('skills' not in value for value in response.data['results'])
+        response = self.client.get(reverse('user-list'), {'skills': 'false'})
+        assert response.status_code == HTTP_200_OK
+        assert len(response.data['results']) == 1
+        assert all('skills' not in value for value in response.data['results'])
+        response = self.client.get(reverse('user-list'), {'skills': 0})
         assert response.status_code == HTTP_200_OK
         assert len(response.data['results']) == 1
         assert all('skills' not in value for value in response.data['results'])
 
-    def test_get_serializer_class__non_staff_with_users(self):
+    def test_get_serializer_class__non_staff_request__with_users(self):
         from ssm.skills.models import UserSkillModel
         UserSkillModel.objects.create(user=self.simple_user, skill=self.skill1)
         UserSkillModel.objects.create(user=self.simple_user, skill=self.skill2)
         self.client.force_authenticate(self.simple_user)
+        response = self.client.get(reverse('user-list'))
+        assert len(response.data['results']) == 1
+        assert all('skills' in value for value in response.data['results'])
+        assert all(len(value['skills']) == 2 for value in response.data['results'])
         response = self.client.get(reverse('user-list'), {'skills': True})
         assert len(response.data['results']) == 1
         assert all('skills' in value for value in response.data['results'])

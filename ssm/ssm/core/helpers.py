@@ -11,3 +11,7 @@ def format(value):
 
 def today():
     return datetime.datetime.now()
+
+
+def true(value):
+    return value in ['true', 'True', '1', True]
