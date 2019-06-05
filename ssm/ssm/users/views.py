@@ -35,7 +35,7 @@ class UserViewSet(ModelViewSet):
     ordering = ['email']
 
     def get_serializer_class(self):
-        if 'skills' in self.request.query_params:
+        if 'skills' not in self.request.query_params or self.request.query_params.get('skills') == 'true':
             return StaffUserWithSkillsSerializer if self.request.user.is_staff else UserWithSkillsSerializer
         return StaffUserSerializer if self.request.user.is_staff else UserSerializer
 
