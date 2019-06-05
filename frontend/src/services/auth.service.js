@@ -41,6 +41,19 @@ export const makeLogin = (email, password) => {
     });
 }
 
+export const createNewSkill = (id, newUserProfile) => {
+  const requestOptions = {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'Authorization':  'JWT' + ' ' + localStorage.getItem('user') },
+    body: JSON.stringify(newUserProfile)
+  };
+  return fetch(`${API_URL}/api/v1/users/${id}/`, requestOptions)
+  .then(handleResponse)
+  .then(user => {
+    return user;
+  });
+}
+
 function handleResponse(response) {
   return response.text().then(text => {
       const data = text && JSON.parse(text);

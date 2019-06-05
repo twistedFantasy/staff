@@ -1,18 +1,17 @@
 <template>
   <div class="home">
-    <UserPage/>
+    <Home />
   </div>
 </template>
 
 
 <script>
-import UserPage from "@/components/UserPage.vue";
+import Home from "@/components/Home.vue";
 
 export default {
-  
-  name: "userPage",
+  name: "home",
   components: {
-    UserPage
+    Home
   },
 }
 </script>

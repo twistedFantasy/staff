@@ -6,7 +6,8 @@ export const getAllAbsencesByUserId = (dataFilter) => {
     method: 'GET',
     headers: { 'Content-Type': 'application/json', 'Authorization':  'JWT' + ' ' + localStorage.getItem('user') },
   };
-  const url = dataFilter && dataFilter.type && dataFilter.value ? `${API_URL}/api/v1/absences/?${dataFilter.type}=${dataFilter.value}&` : `${API_URL}/api/v1/absences/`;
+  const filter = dataFilter || '';
+  const url =`${API_URL}/api/v1/absences/${filter}`;
   return fetch(url, requestOptions)
     .then(handleResponse)
     .then(user => {
@@ -50,7 +51,7 @@ export const deleteAbsence = (id) => {
   .then(user => {
     return user;
   });
-} 
+}
 
 function handleResponse(response) {
   return response.text().then(text => {

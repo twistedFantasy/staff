@@ -36,40 +36,9 @@
     <div class="absence-table">
       <v-toolbar flat color="white" class="table-header">
         <v-toolbar-title>My Absences</v-toolbar-title>
-        <div class="right-block">
-          <div class="filter-block">
-            <v-select
-              v-model="selectedTypeOfFilter"
-              :items="typeOfFiltresOptions"
-              menu-props="auto"
-              label="Select type of filter"
-              hide-details
-              prepend-icon="map"
-              single-line
-            ></v-select>
-            <v-select
-              v-if="selectedTypeOfFilter === 'reason' || selectedTypeOfFilter === 'status'"
-              v-model="selectedFilter"
-              :items="getCurrentOptons()"
-              menu-props="auto"
-              label="Select filter"
-              hide-details
-              prepend-icon="map"
-              single-line
-            ></v-select>
-            <v-text-field
-              v-if="selectedTypeOfFilter === 'start_date' || selectedTypeOfFilter === 'end_date'"
-              v-model="selectedDateFilterValue"
-              append-icon="search"
-              label="yyyy-mm-dd"
-              single-line
-              hide-details
-            ></v-text-field>
-          </div>
-          <v-icon @click="clearFilter()">clear</v-icon>
-        </div>
+        <FiltersBar :getAbsences="getAbsences" :setPagination="setPagination"/>
       </v-toolbar>
-      <v-data-table :headers="headers" :items="absences" class="elevation-1">
+      <v-data-table :headers="headers" :items="absences" class="elevation-1" hide-actions>
         <template slot="items" slot-scope="props">
           <td>{{ props.item.reason }}</td>
           <td class="text-xs-left">{{ props.item.start_date }}</td>
@@ -82,22 +51,35 @@
         </template>
       </v-data-table>
     </div>
+    <div class="text-xs-center pagination">
+      <v-pagination
+        v-model="paginationInfo.page"
+        :length="paginationInfo.count"
+        :total-visible="7"
+        circle
+      ></v-pagination>
+    </div>
   </div>
 </template>
 
 <script>
 import * as absenceService from "../services/absence.service";
 import * as config from "@/config.js";
+import FiltersBar from "./FiltersBar";
 
 export default {
+  components: {
+    FiltersBar
+  },
   data: () => ({
-    selectedDateFilterValue: "",
-    selectedTypeOfFilter: "",
-    selectedFilter: "",
-    dialog: false,
+    paginationInfo: {
+      page: 1,
+      limit: 5,
+      count: 1,
+    },
+
     absenceReasonOptions: config.absenceReasonOptions,
-    typeOfFiltresOptions: config.typeOfFiltresOptions,
-    absenceStatusOptions: config.absenceStatusOptions,
+    dialog: false,
     headers: [
       {
         text: "Reason",
@@ -130,32 +112,27 @@ export default {
     dialog(val) {
       val || this.close();
     },
-    selectedFilter(val) {
-      if (val) {
-        this.getAbsences({ type: this.selectedTypeOfFilter, value: val });
-      }
-    },
-    selectedDateFilterValue(val) {
-      if (val) {
-        const re = /^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/g;
-        const isValid = re.test(val);
-        if (isValid) {
-          this.getAbsences({ type: this.selectedTypeOfFilter, value: val });
-        }
-      }
+    'paginationInfo.page'() {
+      this.getAbsences("");
     }
   },
 
   created() {
-    this.getAbsences();
+    this.getAbsences("");
   },
 
   methods: {
     getAbsences(dataFilter) {
-      absenceService.getAllAbsencesByUserId(dataFilter).then(
+      const currentpage = this.paginationInfo.page - 1;
+      const limit = this.paginationInfo.limit;
+
+      const filter = `?limit=${limit}&offset=${currentpage *
+        limit}&${dataFilter}`;
+      absenceService.getAllAbsencesByUserId(filter).then(
         data => {
           this.$store.dispatch("absence/setAllAbsence", data.results);
           this.absences = data.results;
+          this.setPagination({ count: Math.ceil(data.count / limit) });
         },
         error => {
           console.log(error, "error");
@@ -163,25 +140,8 @@ export default {
       );
     },
 
-    clearFilter() {
-      this.selectedDateFilterValue = "";
-      this.selectedTypeOfFilter = "";
-      this.selectedFilter = "";
-      this.getAbsences();
-    },
-
-    getCurrentOptons() {
-      const currentSelections = this.selectedTypeOfFilter;
-      let answer = [];
-      switch (currentSelections) {
-        case "reason":
-          answer = this.absenceReasonOptions;
-          break;
-        case "status":
-          answer = this.absenceStatusOptions;
-          break;
-      }
-      return answer;
+    setPagination(paginationInfo) {
+        this.paginationInfo = { ...this.paginationInfo, ...paginationInfo };
     },
 
     editItem(item) {
@@ -193,7 +153,7 @@ export default {
     deleteItem(item) {
       absenceService.deleteAbsence(item.id).then(
         () => {
-          this.getAbsences();
+          this.getAbsences("");
         },
         error => {
           console.log(error, "error");
@@ -219,7 +179,7 @@ export default {
       if (this.editedIndex == -1) {
         absenceService.createNewAbsence(data).then(
           () => {
-            this.getAbsences();
+            this.getAbsences("");
             this.close();
           },
           error => {
@@ -229,7 +189,7 @@ export default {
       } else {
         absenceService.editAbsence(data, this.editedItem.id).then(
           () => {
-            this.getAbsences();
+            this.getAbsences("");
             this.close();
           },
           error => {
@@ -240,6 +200,11 @@ export default {
     }
   }
 };
+
+/*
+move modal in diff component
+
+*/
 </script>
 
 <style>
@@ -252,22 +217,29 @@ export default {
   justify-content: flex-end;
 }
 
-.v-toolbar__content {
+
+
+.table-header .v-toolbar__content{
   width: 100%;
   display: grid;
-  grid-template-columns: 4fr 6fr;
+  grid-template-columns: 2fr 8fr;
   justify-content: space-between;
   grid-column-gap: 10px;
   padding: 0;
+  margin: 20px 0;
 }
 .filter-block {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   justify-content: space-between;
-  grid-column-gap: 10px;
+  grid-column-gap: 15px;
 }
 .right-block {
   display: grid;
   grid-template-columns: 9fr 1fr;
 }
+.pagination {
+  margin-top: 20px;
+}
 </style>
+

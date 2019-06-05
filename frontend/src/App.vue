@@ -30,7 +30,7 @@ export default {
       getUserId() {
         this.$store.dispatch('user/setUserId');
         if (this.$store.state.user.logedUserId) {
-            this.$router.push('/UserPage');
+            this.$router.push('/Home');
         }
         else {
           this.$router.push('/Login');
