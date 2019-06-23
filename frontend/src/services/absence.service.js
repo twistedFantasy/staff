@@ -1,66 +1,21 @@
 
 import { API_URL } from '../.env';
+const http = require('./http.init');
 
 export const getAllAbsencesByUserId = (dataFilter) => {
-  const requestOptions = {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json', 'Authorization':  'JWT' + ' ' + localStorage.getItem('user') },
-  };
   const filter = dataFilter || '';
-  const url =`${API_URL}/api/v1/absences/${filter}`;
-  return fetch(url, requestOptions)
-    .then(handleResponse)
-    .then(user => {
-      return user;
-    });
+  return http.get(`${API_URL}/api/v1/absences/`, filter);
 }
 
 export const createNewAbsence = (data) => {
-  const requestOptions = {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization':  'JWT' + ' ' + localStorage.getItem('user') },
-    body: JSON.stringify(data)
-  };
-  return fetch(`${API_URL}/api/v1/absences/`, requestOptions)
-    .then(handleResponse)
-    .then(user => {
-      return user;
-    });
+  return http.post(`${API_URL}/api/v1/absences/`, data);
 }
 
+
 export const editAbsence = (data, id) => {
-  const requestOptions = {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', 'Authorization':  'JWT' + ' ' + localStorage.getItem('user') },
-    body: JSON.stringify(data)
-  };
-  return fetch(`${API_URL}/api/v1/absences/${id}/`, requestOptions)
-  .then(handleResponse)
-  .then(user => {
-    return user;
-  });
+  return http.patch(`${API_URL}/api/v1/absences/${id}/`, data);
 }
 
 export const deleteAbsence = (id) => {
-  const requestOptions = {
-    method: 'DELETE',
-    headers: { 'Content-Type': 'application/json', 'Authorization':  'JWT' + ' ' + localStorage.getItem('user') }
-  };
-  return fetch(`${API_URL}/api/v1/absences/${id}/`, requestOptions)
-  .then(handleResponse)
-  .then(user => {
-    return user;
-  });
-}
-
-function handleResponse(response) {
-  return response.text().then(text => {
-    const data = text && JSON.parse(text);
-    if (!response.ok) {
-        const error = (data && data.msg) || response.statusText;
-        return Promise.reject(error);
-    }
-
-    return data;
-  });
+  return http.del(`${API_URL}/api/v1/absences/${id}/`);
 }

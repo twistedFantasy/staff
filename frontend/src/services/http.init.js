@@ -1,77 +1,46 @@
-/**
- * HTTP request layer
- * if auth is required return patched axios instance(with access token in headers)
- * else return clear axios instance
- */
-
 import axios from 'axios'
 
-import * as authService from '../services/auth.service'
-import { API_URL } from '../.env'
-/*
-export default class Http {
-  constructor (status) {
-    this.isAuth = status && status.auth ? status.auth : false
-    this.instance = axios.create({
-      baseURL: API_URL
-    })
-
-    return this.init()
+const checkExparToken = (response) => {
+  if (response.status === 401) {
+    localStorage.removeItem('customer_token');
+    window.location = '/Login';
   }
-
-  init () {
-    if (this.isAuth) {
-      this.instance.interceptors.request.use(request => {
-        request.headers['token'] = authService.getAccessToken()
-        // if access token expired and refreshToken is exist >> go to API and get new access token
-        if (authService.isAccessTokenExpired() && authService.getRefreshToken()) {
-          return authService.refreshTokens()
-            .then(response => {
-              request.headers['token'] = response.data.accessToken
-              return request
-            }).catch(error => Promise.reject(error))
-        } else {
-          return request
-        }
-      }, error => {
-        return Promise.reject(error)
-      })
-
-      return this.instance
-    }
-    return this.instance
-  }
+  return response;
 }
-*/
-function getHeaders() {
-  return {
-    'Authorization': localStorage.getItem('customer_token'),
+
+
+const extendHeaders = (headers) => {
+  const defaultHeaders = {
+    'Authorization': 'JWT' + ' ' + localStorage.getItem('user'),
     'content-type': 'application/json',
   };
-}
-let _invalidTokenHandler = null;
-export function onInvalidToken(foo) {
-  _invalidTokenHandler = foo;
+
+  return {
+    ...defaultHeaders,
+    ...headers,
+  };
 }
 
-function request(url, data, method) {
+function request(url, data, method, headers) {
   return axios({
     method,
     url,
     data,
-    headers: getHeaders(),
+    headers: extendHeaders(headers),
   });
 }
 
 axios.interceptors.response.use(
-  (response) => response.data,
+  (response) => (response.data),
   (error) => {
+    checkExparToken(error.response)
     return Promise.reject(error.response.data);
   }
 );
 
-export const get = (url) => {
-  return request(url, null, 'GET');
+
+export const get = (url, headers) => {
+  return request(url, null, 'GET', headers);
 }
 
 export const post = (url, data) => {
@@ -86,6 +55,6 @@ export const del = (url) => {
   return request(url, null, 'DELETE');
 }
 
-export const put = (url, data) => {
-  return request(url, data, 'PUT');
+export const put = (url, data, headers) => {
+  return request(url, data, 'PUT', headers);
 }

@@ -10,12 +10,7 @@
     </div>
     <div>
       <v-tabs v-model="currentItem" fixed-tabs>
-        <v-tab 
-          v-for="tab in tabs" 
-          :key="tab.id" 
-          :to="'/Home/'+tab.path">
-          {{ tab.name }}
-        </v-tab>
+        <v-tab v-for="tab in tabs" :key="tab.id" :to="'/Home/'+tab.path">{{ tab.name }}</v-tab>
       </v-tabs>
       <v-content>
         <router-view/>
@@ -40,27 +35,27 @@ export default {
     tabs: [
       {
         name: "Profile",
-        path: 'Profile',
+        path: "Profile",
         id: 1
       },
       {
         name: "Absences",
-        path: 'Absences',
+        path: "Absences",
         id: 2
       },
       {
         name: "Projects",
-        path: 'Projects',
+        path: "Projects",
         id: 3
       },
       {
         name: "Key skills",
-        path: 'Skills',
+        path: "Skills",
         id: 4
       },
       {
         name: "Assessment",
-        path: 'Assessment',
+        path: "Assessment",
         id: 5
       }
     ]
@@ -70,15 +65,15 @@ export default {
   },
   methods: {
     getUserProfile() {
-      authService.getUserById(this.$store.state.user.logedUserId).then(
-        data => {
+      authService
+        .getUserById(this.$store.state.user.logedUserId)
+        .then(data => {
           this.$store.dispatch("user/setUser", data);
           this.userProfile = data;
-        },
-        error => {
+        })
+        .catch(error => {
           console.log(error, "error");
-        }
-      );
+        });
     }
   }
 };

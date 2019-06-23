@@ -71,6 +71,7 @@ export default {
        authService.makeLogin(this.email, this.password).then(
         data => {
             this.error = null;
+            localStorage.setItem('user',  data.token);
              this.$store.dispatch('user/setUserId', data.user)
              this.$router.push('/Home');
              this.getUserProfile(data.user);
