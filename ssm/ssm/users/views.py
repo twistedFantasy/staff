@@ -15,6 +15,7 @@ from ssm.users.serializers import StaffUserSerializer, UserSerializer, StaffUser
     StaffAssessmentSerializer, AssessmentSerializer
 from ssm.users.permissions import AbsenceCustomIsAllowedMethodOrStaff, UserCustomIsAllowedMethodOrStaff, \
     IsCurrentUserOrStaff
+from ssm.core.helpers import true
 from ssm.core.filters import ObjectFieldFilterBackend
 from ssm.core.permissions import IsAllowedMethodOrStaff, IsObjectOwnerOrStaff
 from ssm.core.views import CustomTokenObtainPairView
@@ -35,7 +36,7 @@ class UserViewSet(ModelViewSet):
     ordering = ['email']
 
     def get_serializer_class(self):
-        if 'skills' not in self.request.query_params or self.request.query_params.get('skills') == 'true':
+        if 'skills' not in self.request.query_params or true(self.request.query_params.get('skills')):
             return StaffUserWithSkillsSerializer if self.request.user.is_staff else UserWithSkillsSerializer
         return StaffUserSerializer if self.request.user.is_staff else UserSerializer
 

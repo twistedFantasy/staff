@@ -18,7 +18,9 @@ ABSENCE_STATUS = Choices(('new', 'New'), ('veryfing', 'Verifying'), ('approved',
 ABSENCE_REASON = Choices(('vacation', 'Vacation'), ('illness', 'Illness'), ('holiday', 'Holiday'), ('other', 'Other'))
 ABSENCE_BLOCKED_STATUSES = [ABSENCE_STATUS.approved, ABSENCE_STATUS.rejected]
 ABSENCE_RELATED_NAME = 'absences_approved_by'
-ASSESSMENT_STATUS = Choices(('new', 'New'), ('in_progress', 'In progress'), ('completed', 'Completed'), ('failed', 'Failed'))
+ASSESSMENT_STATUS = Choices(
+    ('new', 'New'), ('in_progress', 'In progress'), ('completed', 'Completed'), ('failed', 'Failed')
+)
 
 
 class UserManager(BaseUserManager):
