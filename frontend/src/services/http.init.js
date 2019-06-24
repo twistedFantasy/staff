@@ -3,6 +3,7 @@ import axios from 'axios'
 const checkExparToken = (response) => {
   if (response.status === 401) {
     localStorage.removeItem('customer_token');
+    localStorage.removeItem('user');
     window.location = '/Login';
   }
   return response;

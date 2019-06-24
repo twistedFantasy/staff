@@ -49,14 +49,9 @@ export default {
         id: 3
       },
       {
-        name: "Key skills",
-        path: "Skills",
-        id: 4
-      },
-      {
         name: "Assessment",
         path: "Assessment",
-        id: 5
+        id: 4
       }
     ]
   }),
