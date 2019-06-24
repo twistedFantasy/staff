@@ -58,7 +58,9 @@ INSTALLED_APPS = [
     'ssm.projects',
     'ssm.skills',
     'ssm.users',
-    'ssm.vacancies',
+    'ssm.absences',
+    'ssm.assessments',
+    'ssm.reports',
 ]
 
 MIDDLEWARE = [
@@ -171,20 +173,30 @@ CELERY_TASK_DEFAULT_ROUTING_KEY = "celery"
 CELERY_TASK_DEFAULT_EXCHANGE = "celery"
 CELERY_TASK_DEFAULT_QUEUE = "celery-general"
 CELERY_TASK_QUEUES = {
-    'celery-general': {
-        'exchange': 'celery',
-        'exchange_type': 'topic',
-        "binding_key": "general.#"
+    "celery-general": {
+        "exchange": "celery",
+        "exchange_type": "topic",
+        "binding_key": "general.#",
     },
+    "celery-report": {
+        "exchange": "report",
+        "exchange_type": "topic",
+        "binding_key": "report.#",
+    }
 }
 CELERY_TASK_ROUTES = {
     "ssm.users.tasks.example.ExampleTask": {
         "queue": "celery-general",
         "routing_key": "general.example",
     },
+    "ssm.reports.tasks.working_hours.WorkingHours": {
+        "queue": "celery-report",
+        "routing_key": "report.working_hours",
+    }
 }
 CELERY_IMPORTS = [
     "ssm.users.tasks.example",
+    "ssm.reports.tasks.working_hours",
 ]
 
 # auth
@@ -198,6 +210,14 @@ CORS_ORIGIN_ALLOW_ALL = bool(os.environ['CORS_ORIGIN_ALLOW_ALL'])
 
 # rest framework
 REST_FRAMEWORK = {
+    'DEFAULT_THROTTLE_CLASSES': (
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ),
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/day',
+        'user': '10000/day'
+    },
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),

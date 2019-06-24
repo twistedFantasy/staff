@@ -7,6 +7,7 @@ class MembersInline(admin.TabularInline):
     model = MembersModel
 
 
+@admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ['name', 'status', 'get_members_count']
     search_fields = ['name']
@@ -20,6 +21,3 @@ class ProjectAdmin(admin.ModelAdmin):
     def get_members_count(self, obj):
         return obj.members.filter(membersmodel__left_date=None).count()
     get_members_count.short_description = 'Members'
-
-
-admin.site.register(Project, ProjectAdmin)

@@ -6,11 +6,12 @@ from django.urls import path, include
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 
-from ssm.users.views import UserViewSet, ChangePasswordView, SSMTokenObtainPairView, AbsenceViewSet, AssessmentViewSet
+from ssm.users.views import UserViewSet, ChangePasswordView, SSMTokenObtainPairView
+from ssm.absences.views import AbsenceViewSet
+from ssm.assessments.views import AssessmentViewSet
 from ssm.skills.views import SkillViewSet
 from ssm.projects.views import ProjectViewSet
 from ssm.events.views import EventViewSet, FAQViewSet
-from ssm.vacancies.views import VacancyViewSet
 
 
 admin.autodiscover()
@@ -26,7 +27,6 @@ router.register(r'projects', ProjectViewSet)
 router.register(r'assessments', AssessmentViewSet)
 router.register(r'events', EventViewSet)
 router.register(r'faq', FAQViewSet)
-router.register(r'vacancies', VacancyViewSet)
 
 urlpatterns = [
     # built-in

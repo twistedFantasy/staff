@@ -7,10 +7,6 @@ class UserCustomIsAllowedMethodOrStaff(IsAllowedMethodOrStaff):
     methods = ['GET', 'HEAD', 'OPTIONS', 'PATCH']
 
 
-class AbsenceCustomIsAllowedMethodOrStaff(IsAllowedMethodOrStaff):
-    methods = ['GET', 'HEAD', 'OPTIONS', 'POST', 'PATCH', 'DELETE']
-
-
 class IsCurrentUserOrStaff(BasePermission):
     """
         Custom permission to allow correct access based on if it's staff or simple user

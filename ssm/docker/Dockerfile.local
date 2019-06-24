@@ -20,6 +20,6 @@ COPY ssm/Pipfile ssm/Pipfile.lock ./
 RUN pipenv install --system --deploy
 COPY ssm/ .
 
-COPY ssm/docker/supervisord/celery-general.conf /etc/supervisord.conf
+COPY ssm/docker/supervisord/celery.conf /etc/supervisord.conf
 
 CMD python3 manage.py migrate && python3 /usr/src/scripts/systemuser.py && python3 manage.py runserver 0.0.0.0:8000

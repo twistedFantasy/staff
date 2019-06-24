@@ -1,18 +1,20 @@
-import datetime
-
 import pytest
 from django.core import mail
 from django.test import TestCase
 from django.conf import settings
 
-from ssm.users.models import User, BIRTHDAY, ASSESSMENT
-from ssm.core.helpers import today
+from ssm.users.models import BIRTHDAY, ASSESSMENT
+from ssm.users.tests.factories import UserFactory
+from ssm.core.helpers import today, Day
 
 
 class UserTestCase(TestCase):
 
     def setUp(self):
-        self.user = User.objects.create(email='UserTestCase@gmail.com')
+        self.user = UserFactory(email='UserTestCase@gmail.com')
+
+    def test_str(self):
+        assert str(self.user) == f'{self.user.get_full_name()} (user {self.user.id})'
 
     def test_is_birthday__true(self):
         self.user.date_of_birth = today()
@@ -24,11 +26,11 @@ class UserTestCase(TestCase):
         assert not self.user.is_birthday()
 
     def test_is_birthday__false_5_days_ago(self):
-        self.user.date_of_birth = today() - datetime.timedelta(days=5)
+        self.user.date_of_birth = Day(ago=5).date
         assert not self.user.is_birthday()
 
     def test_is_birthday__false_5_days_ahead(self):
-        self.user.date_of_birth = today() + datetime.timedelta(days=5)
+        self.user.date_of_birth = Day(ago=-5).date
         assert not self.user.is_birthday()
 
     def test_notify__birthday(self):

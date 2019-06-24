@@ -4,6 +4,9 @@ from rest_framework.serializers import ModelSerializer
 from ssm.skills.models import Skill
 
 
+SKILL_FIELDS = ['id', 'name', 'category']
+
+
 class SkillOnlyAsNameSerializer(DynamicFieldsMixin, ModelSerializer):
 
     class Meta:
@@ -16,13 +19,13 @@ class StaffSkillSerializer(ModelSerializer):
 
     class Meta:
         model = Skill
-        fields = '__all__'
+        fields = SKILL_FIELDS
 
 
 class SkillSerializer(StaffSkillSerializer):
 
     class Meta(StaffSkillSerializer.Meta):
-        read_only_fields = ['name', 'category']
+        read_only_fields = SKILL_FIELDS
 
 
 class StaffSkillWithUsersSerializer(StaffSkillSerializer):
@@ -30,7 +33,7 @@ class StaffSkillWithUsersSerializer(StaffSkillSerializer):
     users = StaffByUserSerializer(source='user_set', many=True)
 
     class Meta(StaffSkillSerializer.Meta):
-        pass
+        fields = StaffSkillSerializer.Meta.fields + ['users']
 
 
 class SkillWithUsersSerializer(SkillSerializer):
@@ -38,4 +41,5 @@ class SkillWithUsersSerializer(SkillSerializer):
     users = ByUserSerializer(source='user_set', many=True, read_only=True)
 
     class Meta(SkillSerializer.Meta):
+        fields = SkillSerializer.Meta.fields + ['users']
         read_only_fields = SkillSerializer.Meta.read_only_fields + ['users']

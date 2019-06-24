@@ -3,18 +3,19 @@ import pytest
 from django.db.utils import IntegrityError
 
 from ssm.skills.models import Skill, UserSkillModel
-from ssm.users.models import User
 from ssm.users.serializers import StaffUserWithSkillsSerializer, UserWithSkillsSerializer
+from ssm.users.tests.factories import StaffUserFactory, UserFactory
 from ssm.core.tests import BaseTestCase
 
 
 class UserWithSkillsSerializerTestCase(BaseTestCase):
 
     def setUp(self):
-        super().setUp()
+        self.staff_user = StaffUserFactory()
+        self.simple_user = UserFactory()
         self.skill = Skill.objects.create(name='python')
-        self.staff_user2 = User.objects.create_user('UserWithSkills.Staff@gmail.com', 'password')
-        self.simple_user2 = User.objects.create_user('UserWithSkills@gmail.com', 'password')
+        self.staff_user2 = StaffUserFactory()
+        self.simple_user2 = UserFactory()
         UserSkillModel.objects.create(user=self.staff_user2, skill=self.skill)
         UserSkillModel.objects.create(user=self.simple_user2, skill=self.skill)
 
@@ -68,7 +69,7 @@ class UserWithSkillsSerializerTestCase(BaseTestCase):
         assert len(serializer.data['skills']) == 1
         assert serializer.data['skills'][0]['name'] == 'golang'
 
-    def test_staff_seriazlier_with_skills__update__initial_one_skill_add_one_more_with_wrong_format(self):
+    def test_staff_serializer_with_skills__update__initial_one_skill_add_one_more_with_wrong_format(self):
         serializer = StaffUserWithSkillsSerializer(self.staff_user2)
         assert serializer.data['skills']
         serializer = StaffUserWithSkillsSerializer(self.staff_user2, data={'skills': [{'nameZ': 'golang'}]})

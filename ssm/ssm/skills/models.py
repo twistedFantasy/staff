@@ -18,13 +18,13 @@ class Skill(BaseModel):
     category = models.CharField('Category', max_length=32, null=True, blank=True, default=None, choices=CATEGORY,
         db_index=True)
 
-    def __str__(self):
-        return f'{self.name} (skill {self.id})'
-
     class Meta:
         app_label = 'skills'
         verbose_name_plural = 'Skills'
         ordering = ['name']
+
+    def __str__(self):
+        return f'{self.name} (skill {self.id})'
 
     def save(self, *args, **kwargs):
         self.name = cleanup(self.name)
@@ -36,17 +36,25 @@ class UserSkillModel(BaseModel):
     skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
     notes = models.TextField('Notes', null=True, blank=True)
 
-    def __str__(self):
-        return f'{self.user}-{self.skill}'
-
     class Meta:
         app_label = 'skills'
         verbose_name_plural = 'UserSkills'
         unique_together = ('user', 'skill')
         ordering = ['skill']
 
+    def __str__(self):
+        return f'{self.user}-{self.skill}'
+
 
 class Verification(BaseModel):
     skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
     question = models.TextField('Question')
     answer = models.TextField('Answer')
+
+    class Meta:
+        app_label = 'skills'
+        verbose_name_plural = 'Verifications'
+        ordering = ['skill']
+
+    def __str__(self):
+        return f'{self.skill} (verification {self.id})'

@@ -1,167 +1,369 @@
-from django.urls import reverse
-from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_403_FORBIDDEN
+from datetime import date
+
+from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_401_UNAUTHORIZED, \
+    HTTP_403_FORBIDDEN
 
 from ssm.events.models import Event, FAQ
+from ssm.events.tests.factories import EventFactory, FAQFactory
+from ssm.events.serializers import StaffEventSerializer, EventSerializer, StaffFAQSerializer, FAQSerializer
+from ssm.users.tests.factories import StaffUserFactory, UserFactory
+from ssm.core.helpers import Day
 from ssm.core.tests import BaseTestCase
 
 
 class EventViewSetTestCase(BaseTestCase):
-    endpoint = 'event-list'
+    list_url = 'event-list'
+    detail_url = 'event-detail'
 
     @classmethod
     def setUpTestData(cls):
-        Event.objects.create(title='Test Event1', description='Test Description1')
-        data = {'title': 'Test Event2', 'description': 'Test Description2', 'active': True}
-        Event.objects.create(**data)
+        cls.staff_user = StaffUserFactory()
+        cls.simple_user = UserFactory()
+        super().setUpTestData()
 
-    def setUp(self):
-        self.data = {'title': 'Test Event', 'description': 'Test Description', 'active': True}
-        self.event = Event.objects.create(**self.data)
-        super().setUp()
+    def test_permission_classes__only_is_authenticated_user_allows_access(self):
+        [EventFactory() for _ in range(2)]
+        response = self.client.get(self.get_list_url())
+        assert response.status_code == HTTP_401_UNAUTHORIZED
+        self.client.force_authenticate(self.staff_user)
+        response = self.client.get(self.get_list_url())
+        assert response.status_code == HTTP_200_OK
+        assert len(response.data['results']) == 2
 
     def test_permission_classes__staff_allow_to_use_any_rest_method(self):
         self.client.force_authenticate(self.staff_user)
-        response = self.client.get(reverse('event-list'))
-        assert response.status_code == HTTP_200_OK
-        assert len(response.data['results']) == 3
-        response = self.client.get(reverse('event-detail', args=[self.event.id]))
-        assert response.status_code == HTTP_200_OK
-        assert response.data['title'] == self.event.title
-        response = self.client.patch(reverse('event-detail', args=[self.event.id]), data={'title': 'New Test Event'})
-        assert response.status_code == HTTP_200_OK
-        assert response.data['title'] == 'New Test Event'
-        data = {'title': 'New Test Event', 'description': 'New Test Description', 'active': True}
-        response = self.client.post(reverse('event-list'), data=data)
+
+        # POST
+        assert Event.objects.count() == 0
+        data = {
+            'title': self.fake.text(),
+            'description': self.fake.text(),
+            'start_date': Day(ago=40).date,
+            'end_date': Day(ago=35).date,
+            'active': self.fake.boolean()
+        }
+        response = self.client.post(self.get_list_url(), data=data)
         assert response.status_code == HTTP_201_CREATED
         assert response.data['title'] == data['title']
-        response = self.client.delete(reverse('event-detail', args=[response.data['id']]))
+        assert Event.objects.count() == 1
+        event = Event.objects.first()
+        self.assert_fields(event, data, self.staff_user)
+
+        # GET(id)
+        response = self.client.get(self.get_detail_url(response.data['id']))
+        assert response.status_code == HTTP_200_OK
+        serializer = StaffEventSerializer(event)
+        assert response.data == serializer.data
+
+        # PATCH
+        data = {'title': self.fake.text()}
+        response = self.client.patch(self.get_detail_url(response.data['id']), data=data)
+        event.refresh_from_db()
+        assert response.status_code == HTTP_200_OK
+        assert response.data['title'] == data['title']
+        assert event.title == data['title']
+
+        # PUT
+        data = {**response.data, **{'title': self.fake.text()}}
+        response = self.client.put(self.get_detail_url(response.data['id']), data=data)
+        event.refresh_from_db()
+        assert response.status_code == HTTP_200_OK
+        assert response.data['title'] == data['title']
+        assert event.title == data['title']
+
+        # DELETE
+        response = self.client.delete(self.get_detail_url(response.data['id']))
         assert response.status_code == HTTP_204_NO_CONTENT
+        assert Event.objects.count() == 0
+
+        # GET(all)
+        [EventFactory() for _ in range(3)]
+        events = Event.objects.all()
+        response = self.client.get(self.get_list_url())
+        assert response.status_code == HTTP_200_OK
+        assert len(response.data['results']) == 3
+        serializer = StaffEventSerializer(events, many=True)
+        assert response.data['results'] == serializer.data
+        assert set(entity['id'] for entity in response.data['results']) == set(entity.id for entity in events)
 
     def test_permission_classes__non_staff_allow_to_use_subset_of_rest_api_methods(self):
         self.client.force_authenticate(self.simple_user)
-        response = self.client.get(reverse('event-list'))
+        event = EventFactory(active=True)
+        event.refresh_from_db()
+
+        # POST
+        assert Event.objects.count() == 1
+        data = {
+            'title': self.fake.text(),
+            'description': self.fake.text(),
+            'start_date': Day(ago=40).date,
+            'end_date': Day(ago=35).date,
+            'active': self.fake.boolean()
+        }
+        response = self.client.post(self.get_list_url(), data=data)
+        assert response.status_code == HTTP_403_FORBIDDEN
+        assert Event.objects.count() == 1
+
+        # GET(id)
+        response = self.client.get(self.get_detail_url(event.id))
         assert response.status_code == HTTP_200_OK
-        assert len(response.data['results']) == 2
-        response = self.client.get(reverse('event-detail', args=[self.event.id]))
+        serializer = EventSerializer(event)
+        assert response.data == serializer.data
+
+        # PATCH
+        data = {'title': self.fake.text()}
+        response = self.client.patch(self.get_detail_url(event.id), data=data)
+        event.refresh_from_db()
+        assert response.status_code == HTTP_403_FORBIDDEN
+        assert event.title != data['title']
+
+        # PUT
+        data = {**response.data, **{'title': self.fake.text()}}
+        response = self.client.put(self.get_detail_url(event.id), data=data)
+        event.refresh_from_db()
+        assert response.status_code == HTTP_403_FORBIDDEN
+        assert event.title != data['title']
+
+        # DELETE
+        response = self.client.delete(self.get_detail_url(event.id))
+        assert response.status_code == HTTP_403_FORBIDDEN
+        assert Event.objects.count() == 1
+
+        # GET(all)
+        [EventFactory(active=active) for active in [True, False, True]]
+        events = Event.objects.filter(active=True)
+        response = self.client.get(self.get_list_url())
         assert response.status_code == HTTP_200_OK
-        assert response.data['title'] == self.event.title
-        response = self.client.patch(reverse('event-detail', args=[self.event.id]), data={'title': 'New Test Event'})
-        assert response.status_code == HTTP_403_FORBIDDEN
-        data = {'title': 'New Test Event', 'description': 'New Test Description', 'active': True}
-        response = self.client.post(reverse('event-list'), data=data)
-        assert response.status_code == HTTP_403_FORBIDDEN
-        response = self.client.delete(reverse('event-detail', args=[self.event.id]))
-        assert response.status_code == HTTP_403_FORBIDDEN
-
-    def test_get_serializer_class__staff_user(self):
-        data = {'title': 'New Test Event', 'description': 'New Test Description', 'active': False}
-        assert self.event.title != data['title']
-        assert self.event.description != data['description']
-        assert self.event.active
-        self.client.force_authenticate(self.staff_user)
-        response = self.client.patch(reverse('event-detail', args=[self.event.id]), data)
-        assert response.data['title'] == data['title']
-        assert response.data['description'] == data['description']
-        assert not response.data['active']
-
-    def test_get_serializer_class_non_staff_user(self):
-        data = {'title': 'New Test Event', 'description': 'New Test Description', 'active': False}
-        assert self.event.title != data['title']
-        assert self.event.description != data['description']
-        assert self.event.active
-        self.client.force_authenticate(self.simple_user)
-        response = self.client.patch(reverse('event-detail', args=[self.event.id]), data)
-        assert response.status_code == HTTP_403_FORBIDDEN
-
-    def test_get_queryset__staff_user_return_all_events(self):
-        self.client.force_authenticate(self.staff_user)
-        response = self.client.get(reverse('event-list'))
         assert len(response.data['results']) == 3
+        serializer = EventSerializer(events, many=True)
+        assert response.data['results'] == serializer.data
+        assert set(entity['id'] for entity in response.data['results']) == set(entity.id for entity in events)
 
-    def test_get_queryset__non_staff_user_return_only_active_events(self):
+    def test_get_serializer_class__staff_event_serializer(self):
+        event = EventFactory()
+        event.refresh_from_db()
+        self.client.force_authenticate(self.staff_user)
+        response = self.client.get(self.get_detail_url(event.id))
+        serializer = StaffEventSerializer(event)
+        assert response.status_code == HTTP_200_OK
+        assert response.data == serializer.data
+
+    def test_get_serializer_class__event_serializer(self):
+        event = EventFactory(active=True)
+        event.refresh_from_db()
         self.client.force_authenticate(self.simple_user)
-        response = self.client.get(reverse('event-list'))
+        response = self.client.get(self.get_detail_url(event.id))
+        serializer = EventSerializer(event)
+        assert response.status_code == HTTP_200_OK
+        assert response.data == serializer.data
+
+    def test_get_serializer_class__staff_user_allow_to_modify_all_fields(self):
+        event = EventFactory()
+        self.client.force_authenticate(self.staff_user)
+        data = {
+            'title': self.fake.text(),
+            'description': self.fake.text(),
+            'start_date': Day(ago=40).date,
+            'end_date': Day(ago=35).date,
+            'active': self.fake.boolean()
+        }
+        response = self.client.patch(self.get_detail_url(event.id), data=data)
+        event.refresh_from_db()
+        for field in data.keys():
+            assert response.data[field] == (format(data[field]) if isinstance(data[field], date) else data[field])
+            assert getattr(event, field) == data[field]
+
+    def test_get_queryset__staff_user_see_all_events(self):
+        [EventFactory(active=active) for active in [True, False, True]]
+        self.client.force_authenticate(self.staff_user)
+        events = Event.objects.all()
+        response = self.client.get(self.get_list_url())
+        assert response.status_code == HTTP_200_OK
+        assert len(response.data['results']) == 3
+        assert set(entity['id'] for entity in response.data['results']) == set(entity.id for entity in events)
+
+    def test_get_queryset__non_staff_see_only_active_events(self):
+        self.client.force_authenticate(self.simple_user)
+        [EventFactory(active=active) for active in [True, False, True]]
+        events = Event.objects.filter(active=True)
+        response = self.client.get(self.get_list_url())
+        assert response.status_code == HTTP_200_OK
         assert len(response.data['results']) == 2
+        assert set(entity['id'] for entity in response.data['results']) == set(entity.id for entity in events)
 
 
 class FAQViewSetTestCase(BaseTestCase):
-    endpoint = 'faq-list'
+    list_url = 'faq-list'
+    detail_url = 'faq-detail'
 
     @classmethod
     def setUpTestData(cls):
-        cls.data1 = {'question': 'Test Question1', 'answer': 'Test Answer1', 'order': 4, 'active': True}
-        FAQ.objects.create(**cls.data1)
-        FAQ.objects.create(question='Test Question2', answer='Test Answer2', order=12)
+        cls.staff_user = StaffUserFactory()
+        cls.simple_user = UserFactory()
+        super().setUpTestData()
 
-    def setUp(self):
-        self.data = {'question': 'Test Question', 'answer': 'Test Answer', 'order': 2, 'active': True}
-        self.faq = FAQ.objects.create(**self.data)
-        super().setUp()
+    def test_permission_classes__only_is_authenticated_user_allows_access(self):
+        [FAQFactory() for _ in range(2)]
+        response = self.client.get(self.get_list_url())
+        assert response.status_code == HTTP_401_UNAUTHORIZED
+        self.client.force_authenticate(self.staff_user)
+        response = self.client.get(self.get_list_url())
+        assert response.status_code == HTTP_200_OK
+        assert len(response.data['results']) == 2
 
     def test_permission_classes__staff_allow_to_use_any_rest_method(self):
         self.client.force_authenticate(self.staff_user)
-        response = self.client.get(reverse('faq-list'))
-        assert response.status_code == HTTP_200_OK
-        assert len(response.data['results']) == 3
-        assert response.data['results'][0]['question'] == self.data['question']
-        assert response.data['results'][0]['order'] == self.data['order']
-        assert response.data['results'][1]['question'] == self.data1['question']
-        assert response.data['results'][1]['order'] == self.data1['order']
-        response = self.client.get(reverse('faq-detail', args=[self.faq.id]))
-        assert response.status_code == HTTP_200_OK
-        assert response.data['question'] == self.faq.question
-        response = self.client.patch(reverse('faq-detail', args=[self.faq.id]), data={'question': 'New Test Question'})
-        assert response.status_code == HTTP_200_OK
-        assert response.data['question'] == 'New Test Question'
-        data = {'question': 'New Test Question', 'answer': 'New Test Answer', 'order': 1, 'active': True}
-        response = self.client.post(reverse('faq-list'), data=data)
+
+        # POST
+        assert Event.objects.count() == 0
+        data = {
+            'question': self.fake.text(),
+            'answer': self.fake.text(),
+            'order': self.fake.random_number(digits=2, fix_len=True),
+            'active': self.fake.boolean(),
+        }
+        response = self.client.post(self.get_list_url(), data=data)
         assert response.status_code == HTTP_201_CREATED
         assert response.data['question'] == data['question']
-        response = self.client.delete(reverse('faq-detail', args=[response.data['id']]))
+        assert FAQ.objects.count() == 1
+        faq = FAQ.objects.first()
+        self.assert_fields(faq, data, self.staff_user)
+
+        # GET(id)
+        response = self.client.get(self.get_detail_url(response.data['id']))
+        assert response.status_code == HTTP_200_OK
+        serializer = StaffFAQSerializer(faq)
+        assert response.data == serializer.data
+
+        # PATCH
+        data = {'question': self.fake.text()}
+        response = self.client.patch(self.get_detail_url(response.data['id']), data=data)
+        faq.refresh_from_db()
+        assert response.status_code == HTTP_200_OK
+        assert response.data['question'] == data['question']
+        assert faq.question == data['question']
+
+        # PUT
+        data = {**response.data, **{'question': self.fake.text()}}
+        response = self.client.put(self.get_detail_url(response.data['id']), data=data)
+        faq.refresh_from_db()
+        assert response.status_code == HTTP_200_OK
+        assert response.data['question'] == data['question']
+        assert faq.question == data['question']
+
+        # DELETE
+        response = self.client.delete(self.get_detail_url(response.data['id']))
         assert response.status_code == HTTP_204_NO_CONTENT
+        assert FAQ.objects.count() == 0
+
+        # GET(all)
+        [FAQFactory() for _ in range(3)]
+        faqs = FAQ.objects.all()
+        response = self.client.get(self.get_list_url())
+        assert response.status_code == HTTP_200_OK
+        assert len(response.data['results']) == 3
+        serializer = StaffFAQSerializer(faqs, many=True)
+        assert response.data['results'] == serializer.data
+        assert set(entity['id'] for entity in response.data['results']) == set(entity.id for entity in faqs)
 
     def test_permission_classes__non_staff_allow_to_use_subset_of_rest_api_methods(self):
         self.client.force_authenticate(self.simple_user)
-        response = self.client.get(reverse('faq-list'))
+        faq = FAQFactory(active=True)
+
+        # POST
+        assert FAQ.objects.count() == 1
+        data = {
+            'question': self.fake.text(),
+            'answer': self.fake.text(),
+            'order': self.fake.random_number(digits=2, fix_len=True),
+            'active': self.fake.boolean(),
+        }
+        response = self.client.post(self.get_list_url(), data=data)
+        assert response.status_code == HTTP_403_FORBIDDEN
+        assert FAQ.objects.count() == 1
+
+        # GET(id)
+        response = self.client.get(self.get_detail_url(faq.id))
         assert response.status_code == HTTP_200_OK
-        assert len(response.data['results']) == 2
-        response = self.client.get(reverse('faq-detail', args=[self.faq.id]))
+        serializer = FAQSerializer(faq)
+        assert response.data == serializer.data
+
+        # PATCH
+        data = {'question': self.fake.text()}
+        response = self.client.patch(self.get_detail_url(faq.id), data=data)
+        faq.refresh_from_db()
+        assert response.status_code == HTTP_403_FORBIDDEN
+        assert faq.question != data['question']
+
+        # PUT
+        data = {**response.data, **{'question': self.fake.text()}}
+        response = self.client.put(self.get_detail_url(faq.id), data=data)
+        faq.refresh_from_db()
+        assert response.status_code == HTTP_403_FORBIDDEN
+        assert faq.question != data['question']
+
+        # DELETE
+        response = self.client.delete(self.get_detail_url(faq.id))
+        assert response.status_code == HTTP_403_FORBIDDEN
+        assert FAQ.objects.count() == 1
+
+        # GET(all)
+        [FAQFactory(active=active) for active in [True, False, True]]
+        faqs = FAQ.objects.filter(active=True)
+        response = self.client.get(self.get_list_url())
         assert response.status_code == HTTP_200_OK
-        assert response.data['question'] == self.faq.question
-        response = self.client.patch(reverse('faq-detail', args=[self.faq.id]), data={'question': 'New Test Question'})
-        assert response.status_code == HTTP_403_FORBIDDEN
-        data = {'question': 'New Test Question', 'answer': 'New Test Answer', 'order': 1, 'active': True}
-        response = self.client.post(reverse('faq-list'), data=data)
-        assert response.status_code == HTTP_403_FORBIDDEN
-        response = self.client.delete(reverse('faq-detail', args=[self.faq.id]))
-        assert response.status_code == HTTP_403_FORBIDDEN
-
-    def test_get_serializer_class__staff_user(self):
-        data = {'question': 'New Test Question', 'answer': 'New Test Answer', 'active': False}
-        assert self.faq.question != data['question']
-        assert self.faq.answer != data['answer']
-        assert self.faq.active
-        self.client.force_authenticate(self.staff_user)
-        response = self.client.patch(reverse('faq-detail', args=[self.faq.id]), data)
-        assert response.data['question'] == data['question']
-        assert response.data['answer'] == data['answer']
-        assert not response.data['active']
-
-    def test_get_serializer_class_non_staff_user(self):
-        data = {'question': 'New Test Question', 'answer': 'New Test Answer', 'active': False}
-        assert self.faq.question != data['question']
-        assert self.faq.answer != data['answer']
-        assert self.faq.active
-        self.client.force_authenticate(self.simple_user)
-        response = self.client.patch(reverse('faq-detail', args=[self.faq.id]), data)
-        response.status_code == HTTP_403_FORBIDDEN
-
-    def test_get_queryset__staff_user_return_all_faq(self):
-        self.client.force_authenticate(self.staff_user)
-        response = self.client.get(reverse('faq-list'))
         assert len(response.data['results']) == 3
+        serializer = FAQSerializer(faqs, many=True)
+        assert response.data['results'] == serializer.data
+        assert set(entity['id'] for entity in response.data['results']) == set(entity.id for entity in faqs)
 
-    def test_get_queryset__non_staff_user_return_only_active_faq(self):
+    def test_get_serializer_class__staff_FAQ_serializer(self):
+        faq = FAQFactory()
+        faq.refresh_from_db()
+        self.client.force_authenticate(self.staff_user)
+        response = self.client.get(self.get_detail_url(faq.id))
+        serializer = StaffFAQSerializer(faq)
+        assert response.status_code == HTTP_200_OK
+        assert response.data == serializer.data
+
+    def test_get_serializer_class__faq_serializer(self):
+        faq = FAQFactory(active=True)
+        faq.refresh_from_db()
         self.client.force_authenticate(self.simple_user)
-        response = self.client.get(reverse('faq-list'))
+        response = self.client.get(self.get_detail_url(faq.id))
+        serializer = FAQSerializer(faq)
+        assert response.status_code == HTTP_200_OK
+        assert response.data == serializer.data
+
+    def test_get_serializer_class__staff_user_allow_to_modify_all_fields(self):
+        faq = FAQFactory()
+        self.client.force_authenticate(self.staff_user)
+        data = {
+            'question': self.fake.text(),
+            'answer': self.fake.text(),
+            'order': self.fake.random_number(digits=2, fix_len=True),
+            'active': self.fake.boolean(),
+        }
+        response = self.client.patch(self.get_detail_url(faq.id), data=data)
+        faq.refresh_from_db()
+        for field in data.keys():
+            assert response.data[field] == (format(data[field]) if isinstance(data[field], date) else data[field])
+            assert getattr(faq, field) == data[field]
+
+    def test_get_queryset__staff_user_see_all_FAQs(self):
+        self.client.force_authenticate(self.staff_user)
+        [FAQFactory(active=active) for active in [True, False, True]]
+        faqs = FAQ.objects.all()
+        response = self.client.get(self.get_list_url())
+        assert response.status_code == HTTP_200_OK
+        assert len(response.data['results']) == 3
+        assert set(entity['id'] for entity in response.data['results']) == set(entity.id for entity in faqs)
+
+    def test_get_queryset__non_staff_see_only_active_faq(self):
+        self.client.force_authenticate(self.simple_user)
+        [FAQFactory(active=active) for active in [True, False, True]]
+        faqs = FAQ.objects.filter(active=True)
+        response = self.client.get(self.get_list_url())
+        assert response.status_code == HTTP_200_OK
         assert len(response.data['results']) == 2
+        assert set(entity['id'] for entity in response.data['results']) == set(entity.id for entity in faqs)

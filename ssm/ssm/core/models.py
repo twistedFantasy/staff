@@ -10,3 +10,9 @@ class BaseModel(models.Model):
 
     class Meta:
         abstract = True
+
+    def modify(self, **kwargs):
+        if kwargs:
+            for key, value in kwargs.items():
+                setattr(self, key, value)
+            self.save(update_fields=list(kwargs.keys()))

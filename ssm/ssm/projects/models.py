@@ -6,7 +6,7 @@ from ssm.core.models import BaseModel
 from ssm.core.helpers import cleanup
 
 STATUS = Choices(
-    ('waiting', 'waiting'), ('in progress', 'In progress'), ('completed', 'Completed'), ('failed', 'Failed')
+    ('waiting', 'waiting'), ('in_progress', 'In progress'), ('completed', 'Completed'), ('failed', 'Failed')
 )
 ROLES = Choices((
     'project_manager', 'Project manager'), ('developer', 'Developer'), ('tester', 'Tester'),
