@@ -5,8 +5,6 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 from ssm.core.models import BaseModel
 from ssm.core.helpers import today
-from ssm.calendar.helpers import add_user_to_calendar
-from ssm.calendar.calendar_settings import CALENDAR_EMAIL
 
 
 BIRTHDAY = 'birthday'
@@ -114,8 +112,3 @@ class User(AbstractBaseUser, BaseModel):
 
     def get_working_hours(self, start_date, end_date):
         return self.working_hours * 21
-
-    def save(self, *args, **kwargs):
-        if self.created == self.modified:
-            add_user_to_calendar(self.email, CALENDAR_EMAIL)
-        super().save(*args, **kwargs)
