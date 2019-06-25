@@ -1,0 +1,1 @@
+CALENDAR_EMAIL = '06f011hmi5qot8kfrfi63a3ef0@group.calendar.google.com'
