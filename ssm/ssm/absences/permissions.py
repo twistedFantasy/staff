@@ -12,12 +12,17 @@ class AbsencePermission(BasePermission):
 
     def has_permission(self, request, view):
         if not request.user.is_staff:
-            if request.method == 'POST' or request.method == 'PATCH':
-                if 'user' in request.data and request.user.id != request.data['user']['id']:
-                    return False
-                if 'reason' in request.data and request.data['reason'] == REASON.holiday:
-                    return False
+            data = request.data
             if request.method == 'POST':
-                if 'status' in request.data and request.data['status'] != STATUS.new:
+                if 'user' not in data or request.user.id != data['user']['id']:
+                    return False
+                if 'reason' not in data or ('user' in data and data['reason'] == REASON.holiday):
+                    return False
+                if 'status' not in data or data['status'] != STATUS.new:
+                    return False
+            elif request.method == 'PATCH':
+                if 'user' in data and request.user.id != data['user']['id']:
+                    return False
+                if 'reason' in data and data['reason'] == REASON.holiday:
                     return False
         return True
