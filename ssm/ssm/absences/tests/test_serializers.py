@@ -56,7 +56,6 @@ class AbsenceSerializerTestCase(TestCase):
         absence = serializer.save()
         assert absence.user.id == data['user']['id']
         assert absence.decision_by.id != data['decision_by']['id']
-        assert absence.notes != data['notes']
         data.pop('user'), data.pop('decision_by'), data.pop('notes')
         for field in data.keys():
             assert getattr(absence, field) == data[field]
