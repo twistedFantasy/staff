@@ -63,7 +63,6 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex";
 import * as absenceService from "../services/absence.service";
 import * as config from "@/config.js";
 import FiltersBar from "./FiltersBar";
