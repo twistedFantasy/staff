@@ -38,6 +38,7 @@ export default {
     };
   },
   methods: {
+    //make action
     getUserProfile(userId) {
       authService.getUserById(userId).then(
         data => {
@@ -48,6 +49,7 @@ export default {
         }
       );
     },
+    //make action
     makeLogin() {
       authService
         .makeLogin(this.email, this.password)

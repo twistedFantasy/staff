@@ -123,6 +123,7 @@ export default {
   },
 
   methods: {
+    //make action
     getAbsences(dataFilter) {
       const currentpage = this.paginationInfo.page - 1;
       const limit = this.paginationInfo.limit;
@@ -167,7 +168,8 @@ export default {
         this.editedIndex = -1;
       }, 300);
     },
-
+    
+    //make action
     save() {
       const data = {
         reason: this.editedItem.reason,

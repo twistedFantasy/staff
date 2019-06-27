@@ -10,6 +10,6 @@ export const makeLogin = (email, password) => {
   return http.post(`${API_URL}/api/v1/token/obtain/`, { email, password });
 }
 
-export const createNewSkill = (id, newUserProfile) => {
+export const updateUserProfile = (id, newUserProfile) => {
   return http.patch(`${API_URL}/api/v1/users/${id}/`, newUserProfile)
 }

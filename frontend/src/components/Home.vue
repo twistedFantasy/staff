@@ -59,6 +59,7 @@ export default {
     this.getUserProfile();
   },
   methods: {
+    //make action
     getUserProfile() {
       authService
         .getUserById(this.$store.state.user.logedUserId)
