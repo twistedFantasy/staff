@@ -63,6 +63,7 @@
 </template>
 
 <script>
+import { mapState, mapGetters } from "vuex";
 import * as absenceService from "../services/absence.service";
 import * as config from "@/config.js";
 import FiltersBar from "./FiltersBar";
@@ -80,6 +81,7 @@ export default {
 
     absenceReasonOptions: config.absenceReasonOptions,
     dialog: false,
+     userProfile: {},
     headers: [
       {
         text: "Reason",
@@ -107,6 +109,9 @@ export default {
       notes: ""
     }
   }),
+    computed: {
+    ...mapGetters("user", { userProfile: "getUserProfile" })
+  },
 
   watch: {
     dialog(val) {
@@ -174,7 +179,9 @@ export default {
         reason: this.editedItem.reason,
         start_date: this.editedItem.start_date,
         end_date: this.editedItem.end_date,
-        notes: this.editedItem.notes
+        notes: this.editedItem.notes,
+        status: 'new',
+        user: { id: this.$store.state.user.logedUserId}
       };
       if (this.editedIndex == -1) {
         absenceService.createNewAbsence(data).then(
