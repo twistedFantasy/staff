@@ -135,7 +135,7 @@ export default {
           this.absences = data.results;
           this.setPagination({ count: Math.ceil(data.count / limit) });
         },
-        error => {
+        () => {
         }
       );
     },
@@ -155,7 +155,7 @@ export default {
         () => {
           this.getAbsences("");
         },
-        error => {
+        () => {
         }
       );
     },
@@ -183,7 +183,7 @@ export default {
             this.getAbsences("");
             this.close();
           },
-          error => {
+          () => {
           }
         );
       } else {
@@ -192,7 +192,7 @@ export default {
             this.getAbsences("");
             this.close();
           },
-          error => {
+          () => {
           }
         );
       }
