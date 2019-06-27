@@ -23,4 +23,4 @@ class AbsenceSerializer(StaffAbsenceSerializer):
     decision_by = ByUserSerializer('decision_by', required=False, read_only=True)
 
     class Meta(StaffAbsenceSerializer.Meta):
-        read_only_fields = ['id', 'decision_by', 'notes']
+        read_only_fields = ['id', 'decision_by']
