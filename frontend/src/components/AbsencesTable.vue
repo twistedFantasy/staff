@@ -108,9 +108,6 @@ export default {
       notes: ""
     }
   }),
-    computed: {
-    ...mapGetters("user", { userProfile: "getUserProfile" })
-  },
 
   watch: {
     dialog(val) {
@@ -139,7 +136,6 @@ export default {
           this.setPagination({ count: Math.ceil(data.count / limit) });
         },
         error => {
-          console.log(error, "error");
         }
       );
     },
@@ -160,7 +156,6 @@ export default {
           this.getAbsences("");
         },
         error => {
-          console.log(error, "error");
         }
       );
     },
@@ -189,7 +184,6 @@ export default {
             this.close();
           },
           error => {
-            console.log(error, "error");
           }
         );
       } else {
@@ -199,7 +193,6 @@ export default {
             this.close();
           },
           error => {
-            console.log(error, "error");
           }
         );
       }
