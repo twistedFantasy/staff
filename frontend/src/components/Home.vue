@@ -21,7 +21,7 @@
 
 <script>
 import * as authService from "../services/auth.service";
-import Profile from "@/components/Profile.vue";
+import Profile from "@/components/Profile/Profile.vue";
 import AbsencesTable from "@/components/AbsencesTable.vue";
 
 export default {

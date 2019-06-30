@@ -217,9 +217,6 @@ move modal in diff component
   display: flex !important;
   justify-content: flex-end;
 }
-
-
-
 .table-header .v-toolbar__content{
   width: 100%;
   display: grid;

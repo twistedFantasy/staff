@@ -14,7 +14,7 @@
 
 <script>
 import { mapState, mapGetters } from "vuex";
-import * as authService from "../services/auth.service";
+import * as authService from "@/services/auth.service";
 export default {
   data: () => ({
   }),
