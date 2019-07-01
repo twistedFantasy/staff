@@ -38,15 +38,19 @@
         <v-toolbar-title>My Absences</v-toolbar-title>
         <FiltersBar :getAbsences="getAbsences" :setPagination="setPagination"/>
       </v-toolbar>
-      <v-data-table :headers="headers" :items="absences" class="elevation-1" hide-actions>
+      <v-data-table :headers="headers" :items="absences" class="elevation-2" hide-actions>
         <template slot="items" slot-scope="props">
+          <td>{{ props.item.status }}</td>
           <td>{{ props.item.reason }}</td>
           <td class="text-xs-left">{{ props.item.start_date }}</td>
           <td class="text-xs-left">{{ props.item.end_date }}</td>
           <td class="text-xs-left">{{ props.item.notes }}</td>
-          <td class="justify-center layout px-0">
-            <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
-            <v-icon small @click="deleteItem(props.item)">delete</v-icon>
+          <td class="text-xs-left">
+            <v-icon v-if="props.item.status === 'new'" small class="mr-2" @click="changeStatus(props.item, 'verifying')">check_circle</v-icon>
+            <v-icon v-if="props.item.status === 'new'" small class="mr-2" @click="editItem(props.item)">edit</v-icon>
+            <v-icon v-if="props.item.status === 'new'" small @click="deleteItem(props.item)">delete</v-icon>
+            <v-icon v-if="props.item.status === 'verifying'" small @click="changeStatus(props.item, 'new')">block</v-icon>
+            
           </td>
         </template>
       </v-data-table>
@@ -82,6 +86,7 @@ export default {
     dialog: false,
      userProfile: {},
     headers: [
+      { text: "Status", value: 'status'},
       {
         text: "Reason",
         align: "left",
@@ -142,7 +147,7 @@ export default {
     },
 
     setPagination(paginationInfo) {
-        this.paginationInfo = { ...this.paginationInfo, ...paginationInfo };
+      this.paginationInfo = { ...this.paginationInfo, ...paginationInfo };
     },
 
     editItem(item) {
@@ -153,6 +158,16 @@ export default {
 
     deleteItem(item) {
       absenceService.deleteAbsence(item.id).then(
+        () => {
+          this.getAbsences("");
+        },
+        () => {
+        }
+      );
+    },
+
+    changeStatus(item, status) {
+      absenceService.changeStatus(item.id, {status}).then(
         () => {
           this.getAbsences("");
         },
@@ -210,7 +225,7 @@ move modal in diff component
 
 <style>
 .absence-table-container {
-  margin: 20px 40px;
+   margin: 20px 40px 100px 40px;
 }
 .absence-table-container .v-dialog__container {
   width: 100%;
@@ -225,6 +240,7 @@ move modal in diff component
   grid-column-gap: 10px;
   padding: 0;
   margin: 20px 0;
+  padding: 0 10px;
 }
 .filter-block {
   display: grid;

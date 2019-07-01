@@ -12,7 +12,7 @@
       <v-tabs v-model="currentItem" fixed-tabs>
         <v-tab v-for="tab in tabs" :key="tab.id" :to="'/Home/'+tab.path">{{ tab.name }}</v-tab>
       </v-tabs>
-      <v-content>
+      <v-content class="tab-content">
         <router-view/>
       </v-content>
     </div>
@@ -92,5 +92,8 @@ export default {
 .v-tabs__bar.theme--light {
   background: none;
   border-bottom: 1px solid grey;
+}
+.tab-content {
+  padding: 0!important;
 }
 </style>

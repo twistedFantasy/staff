@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="absences">
     <AbsencesTable />
   </div>
 </template>
@@ -9,7 +9,6 @@
 import AbsencesTable from "@/components/AbsencesTable.vue";
 
 export default {
-  
   name: "absencesTable",
   components: {
     AbsencesTable
@@ -18,5 +17,7 @@ export default {
 </script>
 
 <style>
-
+  .absences {
+    padding: 40px 100px;
+  }
 </style>

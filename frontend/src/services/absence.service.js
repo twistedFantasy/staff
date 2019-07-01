@@ -18,3 +18,7 @@ export const editAbsence = (data, id) => {
 export const deleteAbsence = (id) => {
   return http.del(`${API_URL}/api/v1/absences/${id}/`);
 }
+
+export const changeStatus = (id, status) => {
+  return http.patch(`${API_URL}/api/v1/absences/${id}/`, status);
+}
