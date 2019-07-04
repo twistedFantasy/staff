@@ -1,21 +1,34 @@
 <template>
   <div>
-    <div class="user-info">
-      <div class="avatar-container">
-        <v-avatar :size="30" color="grey lighten-4">
-          <img src="https://vuetifyjs.com/apple-touch-icon-180x180.png" alt="avatar">
-        </v-avatar>
-      </div>
-      <div class="full-name">{{userProfile.full_name}}</div>
-    </div>
     <div>
-      <v-tabs v-model="currentItem" fixed-tabs>
-        <v-tab v-for="tab in tabs" :key="tab.id" :to="'/Home/'+tab.path">{{ tab.name }}</v-tab>
-      </v-tabs>
-      <v-content class="tab-content">
-        <router-view/>
-      </v-content>
+      <div class="user-info">
+        <div class="avatar-container">
+          <v-avatar :size="30" color="grey lighten-4">
+            <img src="https://vuetifyjs.com/apple-touch-icon-180x180.png" alt="avatar" />
+          </v-avatar>
+        </div>
+        <div class="full-name">{{userProfile.full_name}}</div>
+      </div>
+      <div>
+        <v-tabs v-model="currentItem" fixed-tabs>
+          <v-tab v-for="tab in tabs" :key="tab.id" :to="'/Home/'+tab.path">{{ tab.name }}</v-tab>
+        </v-tabs>
+        <v-content class="tab-content">
+          <router-view />
+        </v-content>
+      </div>
     </div>
+    <v-footer dark height="auto">
+      <v-card class="flex" flat tile>
+        <v-card-actions class="grey darken-3 footer">           
+          <div class="right-footer">&copy;2019 — 
+          <strong>Codex Soft</strong>
+          </div>
+          <div class="faq-footer" @click="dialog = true">FAQ</div>
+        </v-card-actions>
+      </v-card>
+    </v-footer>
+    <FAQModal :visible="dialog" :onClose="() => dialog = false" />
   </div>
 </template>
 
@@ -23,15 +36,18 @@
 import * as authService from "../services/auth.service";
 import Profile from "@/components/Profile/Profile.vue";
 import AbsencesTable from "@/components/AbsencesTable.vue";
+import FAQModal from "@/components/FAQModal.vue";
 
 export default {
   components: {
     Profile,
-    AbsencesTable
+    AbsencesTable,
+    FAQModal
   },
   data: () => ({
     userProfile: {},
     currentItem: "",
+    dialog: false,
     tabs: [
       {
         name: "Profile",
@@ -94,6 +110,19 @@ export default {
   border-bottom: 1px solid grey;
 }
 .tab-content {
-  padding: 0!important;
+  padding: 0 !important;
 }
+.footer {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+.faq-footer {
+  cursor: pointer
+}
+ .faq-footer:hover {
+   text-decoration: underline;
+ }
+
+
 </style>
