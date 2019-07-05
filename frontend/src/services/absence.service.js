@@ -22,3 +22,7 @@ export const deleteAbsence = (id) => {
 export const changeStatus = (id, status) => {
   return http.patch(`${API_URL}/api/v1/absences/${id}/`, status);
 }
+
+export const getFAQContent = () => {
+  return http.get(`${API_URL}/api/v1/faq/`);
+}

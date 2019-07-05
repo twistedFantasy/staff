@@ -5,6 +5,7 @@
 const state = {
   allAbsences: [],
   paginationInfo: {},
+  FAQContent: {},
 }
 
 // getters
@@ -20,6 +21,9 @@ const actions = {
     commit('setAllAbsence', listAbsences)
     }
   },
+  setFAQ ({ state, commit }, data) {
+    commit('setFAQ', data)
+  }
 }
 
 // mutations
@@ -27,6 +31,10 @@ const mutations = {
 
   setAllAbsence (state, listAbsences ) {
     state.allAbsences = listAbsences;
+  },
+
+  setFAQ (state, data ) {
+    state.FAQContent = data;
   },
 }
 

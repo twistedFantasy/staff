@@ -18,16 +18,12 @@
         </v-content>
       </div>
     </div>
-    <v-footer dark height="auto">
-      <v-card class="flex" flat tile>
         <v-card-actions class="grey darken-3 footer">           
           <div class="right-footer">&copy;2019 — 
           <strong>Codex Soft</strong>
           </div>
           <div class="faq-footer" @click="dialog = true">FAQ</div>
         </v-card-actions>
-      </v-card>
-    </v-footer>
     <FAQModal :visible="dialog" :onClose="() => dialog = false" />
   </div>
 </template>
@@ -116,6 +112,8 @@ export default {
   width: 100%;
   display: flex;
   justify-content: space-between;
+  position: fixed;
+  bottom: 0;
 }
 .faq-footer {
   cursor: pointer
