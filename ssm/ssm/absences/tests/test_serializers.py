@@ -1,5 +1,4 @@
 from django.test import TestCase
-from faker import Faker
 
 from ssm.absences.models import STATUS, REASON
 from ssm.absences.serializers import StaffAbsenceSerializer, AbsenceSerializer, FIELDS

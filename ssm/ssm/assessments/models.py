@@ -25,4 +25,33 @@ class Assessment(BaseModel):
         ordering = ['-id']
 
     def __str__(self):
-        return f'{self.id} (assessment {self.user})'
+        return f'{self.user} (assessment {self.id})'
+
+
+class Checkpoint(BaseModel):
+    assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
+    title = models.CharField('Title', max_length=256)
+    date = models.DateField('Date')
+
+    class Meta:
+        app_label = 'assessments'
+        verbose_name_plural = 'Checkpoints'
+        ordering = ['-id']
+
+    def __str__(self):
+        return f'{self.date} (checkpoint {self.id})'
+
+
+class Task(BaseModel):
+    checkpoint = models.ForeignKey(Checkpoint, on_delete=models.CASCADE)
+    title = models.CharField('Title', max_length=256)
+    description = models.TextField('Description', null=True, blank=True)
+    completed = models.BooleanField('Completed', default=False)
+
+    class Meta:
+        app_label = 'assessments'
+        verbose_name_plural = 'Tasks'
+        ordering = ['-id']
+
+    def __str__(self):
+        return f'{self.title} (task {self.id})'

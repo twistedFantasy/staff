@@ -8,7 +8,7 @@ from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 
 from ssm.users.views import UserViewSet, ChangePasswordView, SSMTokenObtainPairView
 from ssm.absences.views import AbsenceViewSet
-from ssm.assessments.views import AssessmentViewSet
+from ssm.assessments.views import AssessmentViewSet, CheckpointViewSet, TaskViewSet
 from ssm.skills.views import SkillViewSet
 from ssm.projects.views import ProjectViewSet
 from ssm.events.views import EventViewSet, FAQViewSet
@@ -25,6 +25,8 @@ router.register(r'skills', SkillViewSet)
 router.register(r'absences', AbsenceViewSet)
 router.register(r'projects', ProjectViewSet)
 router.register(r'assessments', AssessmentViewSet)
+router.register(r'checkpoints', CheckpointViewSet)
+router.register(r'tasks', TaskViewSet)
 router.register(r'events', EventViewSet)
 router.register(r'faq', FAQViewSet)
 

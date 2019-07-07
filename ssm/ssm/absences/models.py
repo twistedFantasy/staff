@@ -26,7 +26,7 @@ class Absence(BaseModel):
         ordering = ['-id']
 
     def __str__(self):
-        return f'{self.id} (absences {self.user.id if self.user else "-"})'
+        return f'{self.user.id if self.user else "-"} (absences {self.id})'
 
     def save(self, *args, **kwargs):
         if self.reason == REASON.holiday and self.user:

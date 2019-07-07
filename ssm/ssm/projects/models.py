@@ -31,17 +31,17 @@ class Project(BaseModel):
     members = models.ManyToManyField(User, through='MembersModel', related_name='members')
     estimation_in_man_hours = models.IntegerField('Estimation In Man-hours', null=True, blank=True)
 
+    class Meta:
+        app_label = 'projects'
+        verbose_name_plural = 'Projects'
+        ordering = ['-modified']
+
     def __str__(self):
         return f'{self.name} (project {self.id})'
 
     def save(self, *args, **kwargs):
         self.name = cleanup(self.name)
         super().save(*args, **kwargs)
-
-    class Meta:
-        app_label = 'projects'
-        verbose_name_plural = 'Projects'
-        ordering = ['-modified']
 
 
 class MembersModel(models.Model):
@@ -57,3 +57,6 @@ class MembersModel(models.Model):
         verbose_name_plural = 'Members'
         unique_together = ('user', 'project', 'role')
         ordering = ['user']
+
+    def __str__(self):
+        return  f'{self.user}-{self.project}'

@@ -2,7 +2,8 @@ from django.test import TestCase
 
 from ssm.assessments.models import STATUS
 from ssm.assessments.tests.factories import AssessmentFactory
-from ssm.assessments.serializers import StaffAssessmentSerializer, AssessmentSerializer, FIELDS, CUSTOM_FIELDS
+from ssm.assessments.serializers import StaffAssessmentSerializer, AssessmentSerializer, ASSESSMENT_FIELDS, \
+    ASSESSMENT_CUSTOM_FIELDS
 from ssm.users.tests.factories import UserFactory
 from ssm.core.helpers import Day
 
@@ -12,8 +13,8 @@ class StaffAssessmentSerializerTestCase(TestCase):
     def test__model_fields(self):
         assessment = AssessmentFactory()
         serializer = StaffAssessmentSerializer(assessment)
-        for field in FIELDS:
-            if field not in CUSTOM_FIELDS:
+        for field in ASSESSMENT_FIELDS:
+            if field not in ASSESSMENT_CUSTOM_FIELDS:
                 assert serializer.data[field] == getattr(assessment, field)
 
     def test__empty_read_only_fields(self):

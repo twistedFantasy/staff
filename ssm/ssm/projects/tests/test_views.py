@@ -1,6 +1,7 @@
 from rest_framework.status import HTTP_200_OK, HTTP_401_UNAUTHORIZED
 
 from ssm.projects.models import Project, MembersModel
+from ssm.projects.tests.factories import ProjectWith3UsersFactory
 from ssm.users.tests.factories import StaffUserFactory, UserFactory
 from ssm.core.tests import BaseTestCase
 from ssm.core.helpers import today

@@ -26,3 +26,15 @@ class MembersModelFactory(DjangoModelFactory):
     role = Faker('random_element', elements=list(ROLES))
     joined_date = Faker('date')
     left_date = Faker('date')
+
+
+class UserWith3ProjectsFactory(UserFactory):
+    membership1 = RelatedFactory(MembersModelFactory, 'user', project__name=Faker('word'))
+    membership2 = RelatedFactory(MembersModelFactory, 'user', project__name=Faker('word'))
+    membership3 = RelatedFactory(MembersModelFactory, 'user', project__name=Faker('word'))
+
+
+class ProjectWith3UsersFactory(ProjectFactory):
+    membership1 = RelatedFactory(MembersModelFactory, 'project', user__email=Faker('email'))
+    membership2 = RelatedFactory(MembersModelFactory, 'project', user__email=Faker('email'))
+    membership3 = RelatedFactory(MembersModelFactory, 'project', user__email=Faker('email'))
