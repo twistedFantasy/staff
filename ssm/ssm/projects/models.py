@@ -1,10 +1,11 @@
+from django.conf import settings
 from django.db import models
 from model_utils.choices import Choices
 
 from ssm.users.models import User
 from ssm.core.models import BaseModel
 from ssm.core.helpers import cleanup
-from ssm.calendar.helpers import create_calendar, add_user_to_calendar
+from ssm.core.google.calendar import Calendar
 
 STATUS = Choices(
     ('waiting', 'waiting'), ('in_progress', 'In progress'), ('completed', 'Completed'), ('failed', 'Failed')
@@ -33,15 +34,15 @@ class Project(BaseModel):
     estimation_in_man_hours = models.IntegerField('Estimation In Man-hours', null=True, blank=True)
 
     # google services
-    google_calendar_email = models.CharField('Google calendar email', max_length=128, null=False, blank=False,
-                                             default='')
+    google_calendar_id = models.CharField('Google calendar email', max_length=128, null=True, blank=True)
 
     def __str__(self):
         return f'{self.name} (project {self.id})'
 
     def save(self, *args, **kwargs):
         self.name = cleanup(self.name)
-        self.google_calendar_email = create_calendar(self.name)
+        if settings.GOOGLE_CALENDAR_SYNC:
+            self.google_calendar_id = Calendar.create(self.name)
         super().save(*args, **kwargs)
 
     class Meta:
@@ -59,8 +60,8 @@ class MembersModel(models.Model):
     left_date = models.DateField('Left Date',  null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        if self.user.id not in self.project.members.values_list('id', flat=True):
-            add_user_to_calendar(self.user.email, self.project.google_calendar_email)
+        if settings.GOOGLE_CALENDAR_SYNC and self.user.id not in self.project.members.values_list('id', flat=True):
+            Calendar.add_user(self.user.email, self.project.google_calendar_id)
         super().save(*args, **kwargs)
 
     class Meta:

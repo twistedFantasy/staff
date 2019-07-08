@@ -281,12 +281,6 @@ TEST_STAFFUSER_PASSWORD = 'test.staffuser.password'
 TEST_SIMPLEUSER_EMAIL = 'test.simpleuser@gmail.com'
 TEST_SIMPLEUSER_PASSWORD = 'test.simpleuser.password'
 
-# google calendar email and google calendar group
-try:
-    from ssm.calendar.calendar_settings import *
-except ModuleNotFoundError:
-    raise ModuleNotFoundError('Need to create google calendar for organization! '
-                              'Run python3 ssm/calendar/helpers.py --init-calendar <calendar name>')
-from ssm.calendar.helpers import SERVICE_ACCOUNT_FILE
-if not os.path.exists(SERVICE_ACCOUNT_FILE):
-    raise BaseException('Service account key not found! Run python3 ssm/calendar/helpers.py --create-tokens')
+# google calendar
+GOOGLE_CALENDAR_SYNC = True
+GOOGLE_CALENDAR_ID = '06f011hmi5qot8kfrfi63a3ef0@group.calendar.google.com'

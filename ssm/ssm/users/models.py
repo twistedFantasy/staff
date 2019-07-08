@@ -5,8 +5,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 from ssm.core.models import BaseModel
 from ssm.core.helpers import today
-from ssm.calendar.helpers import add_user_to_calendar
-from ssm.calendar.calendar_settings import CALENDAR_EMAIL
+from ssm.core.google.calendar import Calendar
 
 
 BIRTHDAY = 'birthday'
@@ -116,6 +115,6 @@ class User(AbstractBaseUser, BaseModel):
         return self.working_hours * 21
 
     def save(self, *args, **kwargs):
-        if self.created == self.modified:
-            add_user_to_calendar(self.email, CALENDAR_EMAIL)
+        if settings.GOOGLE_CALENDAR_SYNC and not self.id:
+            Calendar.add_user(self.email, settings.GOOGLE_CALENDAR_ID)
         super().save(*args, **kwargs)

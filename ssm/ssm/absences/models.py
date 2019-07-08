@@ -1,10 +1,10 @@
+from django.conf import settings
 from django.db import models
 from model_utils.choices import Choices
 
 from ssm.users.models import User
 from ssm.core.models import BaseModel
-from ssm.calendar.helpers import add_event_to_calendar
-from ssm.calendar.calendar_settings import CALENDAR_EMAIL
+from ssm.core.google.calendar import Calendar
 
 
 STATUS = Choices(('new', 'New'), ('verifying', 'Verifying'), ('approved', 'Approved'), ('rejected', 'Rejected'))
@@ -41,7 +41,6 @@ class Absence(BaseModel):
                                                                                self.reason, str(self.notes))
             calendars = self.user.membersmodel_set.values_list('project__google_calendar_email', flat=True)
             for calendar in calendars:
-                print(calendar)
-                add_event_to_calendar(summary, description, self.start_date, self.end_date, calendar)
-            add_event_to_calendar(summary, description, self.start_date, self.end_date, CALENDAR_EMAIL)
+                Calendar.create_event(summary, description, self.start_date, self.end_date, calendar)
+            Calendar.create_event(summary, description, self.start_date, self.end_date, settings.GOOGLE_CALENDAR_ID)
         super().save(*args, **kwargs)

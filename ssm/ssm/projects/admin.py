@@ -13,12 +13,12 @@ class ProjectAdmin(admin.ModelAdmin):
     search_fields = ['name']
     fieldsets = [
         (None, {'fields': ['name', 'description']}),
-        ('Google services', {'fields': ['google_calendar_email']}),
+        ('Google services', {'fields': ['google_calendar_id']}),
         ('Details', {'fields': ['status', 'estimation_in_man_hours', 'specification']}),
         ('Duration', {'fields': ['start_date', 'end_date']}),
     ]
     inlines = [MembersInline]
-    readonly_fields = ['google_calendar_email']
+    readonly_fields = ['google_calendar_id']
 
     def get_members_count(self, obj):
         return obj.members.filter(membersmodel__left_date=None).count()
