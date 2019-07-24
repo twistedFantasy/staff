@@ -1,5 +1,5 @@
 
-
+import * as authService from "@/services/auth.service";
 // initial state
 // shape: [{ id, quantity }]
 const state = {
@@ -15,16 +15,28 @@ const getters = {
 // actions
 const actions = {
 
-  setUserId ({ state, commit }) {
+  setUserId ({ commit }) {
     commit('setUserId')
   },
-  setUser ({ state, commit }, userObject) {
+  setUser ({ commit }, userObject) {
     commit('setUser', userObject)
-  }
+  },
+  
+  getUser ( { state, dispatch } ) {
+    authService
+    .getUserById(state.logedUserId)
+    .then(data => {
+      dispatch('setUser', data);
+    })
+    .catch(error => {
+      console.log(error, "error");
+    });
+  },
 }
 
 // mutations
 const mutations = {
+  
 
   setUserId (state ) {
     const jwtToken = localStorage.getItem('user');

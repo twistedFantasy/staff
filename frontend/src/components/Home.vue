@@ -29,17 +29,14 @@
 </template>
 
 <script>
-import * as authService from "../services/auth.service";
-import Profile from "@/components/Profile/Profile.vue";
-import AbsencesTable from "@/components/AbsencesTable.vue";
+import { mapState, mapActions } from 'vuex';
 import FAQModal from "@/components/FAQModal.vue";
 
 export default {
   components: {
-    FAQModal
+    FAQModal,
   },
   data: () => ({
-    userProfile: {},
     currentItem: "",
     dialog: false,
     tabs: [
@@ -65,22 +62,16 @@ export default {
       }
     ]
   }),
+  computed: mapState({
+    userProfile: state => state.user.userProfile,
+  }),
   created() {
     this.getUserProfile();
   },
   methods: {
-    //make action
-    getUserProfile() {
-      authService
-        .getUserById(this.$store.state.user.logedUserId)
-        .then(data => {
-          this.$store.dispatch("user/setUser", data);
-          this.userProfile = data;
-        })
-        .catch(error => {
-          console.log(error, "error");
-        });
-    }
+    ...mapActions({
+      getUserProfile: 'user/getUser' // проксирует `this.getUserProfile()` в `this.$store.dispatch('user/getUser')`
+    }),
   }
 };
 </script>

@@ -73,7 +73,7 @@
 </template>
 <script>
 
-import { mapGetters } from "vuex";
+import { mapState } from "vuex";
 import * as authService from "@/services/auth.service";
 
 export default {
@@ -91,9 +91,9 @@ export default {
       newSkill: ""
     }
   }),
-  computed: {
-    ...mapGetters("user", { userProfile: "getUserProfile" })
-  },
+  computed: mapState({
+    userProfile: state => state.user.userProfile
+  }),
   created() {
     this.editedItem = {
       full_name: this.userProfile.full_name,
@@ -142,7 +142,6 @@ export default {
       const userId = this.$store.state.user.logedUserId;
       authService.updateUserProfile(userId, data).then(
         () => {
-          //this.getUserProfile();
           this.close();
         },
         error => {

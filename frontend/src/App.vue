@@ -11,24 +11,23 @@
       </v-toolbar-items>
     </v-toolbar>
     <v-content>
-      <router-view/>
+      <router-view />
     </v-content>
   </v-app>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapState } from "vuex";
 export default {
   name: "App",
   data() {
-    
     return {
       //
     };
   },
-    computed: {
-    ...mapGetters("user", { userProfile: "getUserProfile" })
-  },
+  computed: mapState({
+    userProfile: state => state.user.userProfile
+  }),
   created() {
     this.getUserId();
   },
@@ -50,7 +49,7 @@ export default {
 
 <style>
 #app {
-  background: #001C29;
+  background: #001c29;
 }
 .hidden-sm-and-down.toolbar-right {
   padding: 15px;

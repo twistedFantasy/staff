@@ -25,9 +25,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 import * as authService from "../services/auth.service";
-import { setUserId } from "../store/modules/user";
-import { mapState } from "vuex";
 
 export default {
   data() {
@@ -38,17 +37,9 @@ export default {
     };
   },
   methods: {
-    //make action
-    getUserProfile(userId) {
-      authService.getUserById(userId).then(
-        data => {
-          this.$store.dispatch("user/setUser", data);
-        },
-        error => {
-          console.log(error, "error");
-        }
-      );
-    },
+    ...mapActions({
+      getUserProfile: 'user/getUser'
+    }),
     //make action
     makeLogin() {
       authService
@@ -58,7 +49,7 @@ export default {
           localStorage.setItem("user", data.token);
           this.$store.dispatch("user/setUserId", data.user);
           this.$router.push("/Home");
-          this.getUserProfile(data.user);
+          this.getUserProfile();
         })
         .catch(error => (this.error = error));
     }

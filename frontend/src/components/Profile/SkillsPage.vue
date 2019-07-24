@@ -13,14 +13,13 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import * as authService from "@/services/auth.service";
+import { mapState } from "vuex";
 export default {
   data: () => ({
   }),
-  computed: {
-    ...mapGetters("user", { userProfile: "getUserProfile" })
-  },
+   computed: mapState({
+    userProfile: state => state.user.userProfile
+  }),
 };
 </script>
 

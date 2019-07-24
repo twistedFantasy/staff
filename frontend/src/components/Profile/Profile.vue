@@ -30,7 +30,7 @@
 </template>
 <script>
 
-import { mapGetters } from "vuex";
+import { mapState } from "vuex";
 import SkillsPage from "./SkillsPage";
 import EditProfileForm from "./EditProfileForm";
 
@@ -42,9 +42,9 @@ export default {
   data: () => ({
    
   }),
-  computed: {
-    ...mapGetters("user", { userProfile: "getUserProfile" })
-  },
+ computed: mapState({
+    userProfile: state => state.user.userProfile
+  }),
 };
 </script>
 
