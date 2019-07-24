@@ -1,6 +1,6 @@
 <template>
-  <v-app id="app">
-    <v-toolbar app>
+  <v-app class="app" id="app">
+    <v-toolbar v-if="userProfile && userProfile.full_name" app>
       <v-toolbar-side-icon></v-toolbar-side-icon>
       <v-toolbar-title>Title</v-toolbar-title>
       <v-spacer></v-spacer>
@@ -17,12 +17,17 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
   name: "App",
   data() {
+    
     return {
       //
     };
+  },
+    computed: {
+    ...mapGetters("user", { userProfile: "getUserProfile" })
   },
   created() {
     this.getUserId();
@@ -44,6 +49,9 @@ export default {
 </script>
 
 <style>
+#app {
+  background: #001C29;
+}
 .hidden-sm-and-down.toolbar-right {
   padding: 15px;
 }

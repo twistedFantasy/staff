@@ -36,8 +36,6 @@ import FAQModal from "@/components/FAQModal.vue";
 
 export default {
   components: {
-    Profile,
-    AbsencesTable,
     FAQModal
   },
   data: () => ({

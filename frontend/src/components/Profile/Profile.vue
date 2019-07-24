@@ -30,7 +30,7 @@
 </template>
 <script>
 
-import { mapState, mapGetters } from "vuex";
+import { mapGetters } from "vuex";
 import SkillsPage from "./SkillsPage";
 import EditProfileForm from "./EditProfileForm";
 

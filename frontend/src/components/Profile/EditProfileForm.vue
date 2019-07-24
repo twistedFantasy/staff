@@ -73,7 +73,7 @@
 </template>
 <script>
 
-import { mapState, mapGetters } from "vuex";
+import { mapGetters } from "vuex";
 import * as authService from "@/services/auth.service";
 
 export default {

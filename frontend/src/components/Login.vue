@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <v-layout align-center justify-center row fill-height>
-      <v-card>
+      <v-card class="content-container">
         <v-form>
           <div class="title-form">Log In</div>
           <v-container>
@@ -69,6 +69,11 @@ export default {
 <style>
 .container {
   margin-top: 10px;
+  
+}
+.theme--light.v-sheet.content-container {
+  background: #003851;
+  border-radius: 3px;
 }
 .error-login {
   color: red;
