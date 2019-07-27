@@ -50,6 +50,7 @@ export default {
 <style>
 #app {
   background: #001c29;
+  color: #66A4D4;
 }
 .hidden-sm-and-down.toolbar-right {
   padding: 15px;

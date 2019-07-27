@@ -28,16 +28,22 @@ const actions = {
     .then(data => {
       dispatch('setUser', data);
     })
-    .catch(error => {
-      console.log(error, "error");
+    .catch(() => {
     });
   },
+
+  onChangeUserProfile ({ state, dispatch }, data) {
+    authService.updateUserProfile(state.logedUserId, data).then(
+      () => {
+        dispatch('getUser');
+      },
+      () => {}
+    );
+  }
 }
 
 // mutations
 const mutations = {
-  
-
   setUserId (state ) {
     const jwtToken = localStorage.getItem('user');
     if(jwtToken ) {

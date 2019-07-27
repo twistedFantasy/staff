@@ -73,8 +73,7 @@
 </template>
 <script>
 
-import { mapState } from "vuex";
-import * as authService from "@/services/auth.service";
+import { mapState, mapActions } from "vuex";
 
 export default {
   data: () => ({
@@ -92,7 +91,8 @@ export default {
     }
   }),
   computed: mapState({
-    userProfile: state => state.user.userProfile
+    userProfile: state => state.user.userProfile,
+    userId: state => state.user.logedUserId,
   }),
   created() {
     this.editedItem = {
@@ -128,26 +128,13 @@ export default {
         editedItem.skills.splice(index, 1);
       }
     },
-    //make action
+    ...mapActions({
+      onChangeUserProfile: 'user/onChangeUserProfile'
+    }),
+
     save() {
-      const data = {
-        phone_number: this.editedItem.phone_number,
-        phone_number2: this.editedItem.phone_number2,
-        full_name: this.editedItem.full_name,
-        skype: this.editedItem.skype,
-        date_of_birth: this.editedItem.date_of_birth,
-        education: this.editedItem.education,
-        skills: this.editedItem.skills
-      };
-      const userId = this.$store.state.user.logedUserId;
-      authService.updateUserProfile(userId, data).then(
-        () => {
-          this.close();
-        },
-        error => {
-          console.log(error, "error");
-        }
-      );
+      this.onChangeUserProfile(this.editedItem);
+      this.close(); 
     }
   }
 };
