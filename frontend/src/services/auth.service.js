@@ -13,3 +13,7 @@ export const makeLogin = (email, password) => {
 export const updateUserProfile = (id, newUserProfile) => {
   return http.patch(`${API_URL}/api/v1/users/${id}/`, newUserProfile)
 }
+
+export const getFAQContent = () => {
+  return http.get(`${API_URL}/api/v1/faq/`);
+}

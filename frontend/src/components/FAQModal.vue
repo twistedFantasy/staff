@@ -1,49 +1,40 @@
 <template>
   <div v-bind:class="{ 'modal-container open': visible, 'modal-container close': !visible }">
-    <div class="faq-title">FAQ
-      <div class="close-icon" @click="onClose"> <v-icon>close</v-icon></div>
+    <div class="faq-title">
+      FAQ
+      <div class="close-icon" @click="onClose">
+        <v-icon>close</v-icon>
+      </div>
     </div>
     <div class="faq-content">
-       <div v-for="faq in faqs" v-bind:key="faq.name">
-         <div v-if="faq.active">
-         <div class="question">{{faq.question}} :</div>
-          <div class="answer">{{faq.answer}}</div>
-          </div>
-       </div>
+      <div v-for="item in faq" v-bind:key="item.name">
+        <div v-if="item.active">
+          <div class="question">{{item.question}} :</div>
+          <div class="answer">{{item.answer}}</div>
+        </div>
+      </div>
     </div>
-    
   </div>
-  
 </template>
 
 <script>
-import * as absenceService from "../services/absence.service";
+import { mapState, mapActions } from 'vuex';
 export default {
-  
   props: {
     onClose: { type: Function },
     visible: { type: Boolean }
   },
-    data: () => ({
-    faqs: [],
-    
+  data: () => ({}),
+  computed: mapState({
+    faq: state => state.user.faq
   }),
   created() {
     this.getFAQ();
   },
-   methods: {
-    //make action
-    getFAQ() {
-      absenceService
-        .getFAQContent()
-        .then(data => {
-          this.$store.dispatch("absence/setFAQ", data.results);
-          this.faqs = data.results;
-        })
-        .catch(error => {
-          console.log(error, "error");
-        });
-    }
+  methods: {
+    ...mapActions({
+      getFAQ: "user/getFAQ" // проксирует `this.getUserProfile()` в `this.$store.dispatch('user/getUser')`
+    })
   }
 };
 </script>
@@ -74,7 +65,7 @@ export default {
 .faq-title {
   position: relative;
   padding: 20px;
-  font-size: 20px!important;
+  font-size: 20px !important;
   margin-bottom: 10px;
   border-bottom: 1px solid;
 }

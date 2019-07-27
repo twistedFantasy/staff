@@ -5,6 +5,7 @@ import * as authService from "@/services/auth.service";
 const state = {
   userProfile: {},
   logedUserId: null,
+  faq: [],
 }
 
 // getters
@@ -20,6 +21,9 @@ const actions = {
   },
   setUser ({ commit }, userObject) {
     commit('setUser', userObject)
+  },
+  setFAQ ({ commit }, data) {
+    commit('setFAQ', data)
   },
   
   getUser ( { state, dispatch } ) {
@@ -39,6 +43,15 @@ const actions = {
       },
       () => {}
     );
+  },
+
+  getFAQ ({ dispatch }) {
+    authService
+    .getFAQContent()
+    .then(data => {
+      dispatch("setFAQ", data.results);
+    })
+    .catch(() => {});
   }
 }
 
@@ -56,6 +69,9 @@ const mutations = {
   },
   setUser (state, data ) {
     state.userProfile = data;
+  },
+  setFAQ (state, data ) {
+    state.faq = data;
   },
 
 }

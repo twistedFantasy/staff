@@ -40,7 +40,6 @@ export default {
     ...mapActions({
       getUserProfile: 'user/getUser'
     }),
-    //make action
     makeLogin() {
       authService
         .makeLogin(this.email, this.password)
