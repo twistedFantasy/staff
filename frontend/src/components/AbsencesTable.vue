@@ -36,7 +36,7 @@
     <div class="absence-table">
       <v-toolbar flat color="white" class="table-header">
         <v-toolbar-title>My Absences</v-toolbar-title>
-        <FiltersBar :getAbsences="getAbsences" :setPagination="setPagination"/>
+        <FiltersBar :setFilter="setFilter"/>
       </v-toolbar>
       <v-data-table :headers="headers" :items="absences" class="elevation-2" hide-actions>
         <template slot="items" slot-scope="props">
@@ -68,6 +68,7 @@
 
 <script>
 import * as absenceService from "../services/absence.service";
+import { mapState, mapActions } from 'vuex';
 import * as config from "@/config.js";
 import FiltersBar from "./FiltersBar";
 
@@ -76,15 +77,9 @@ export default {
     FiltersBar
   },
   data: () => ({
-    paginationInfo: {
-      page: 1,
-      limit: 5,
-      count: 1,
-    },
-
     absenceReasonOptions: config.absenceReasonOptions,
     dialog: false,
-     userProfile: {},
+    userProfile: {},
     headers: [
       { text: "Status", value: 'status'},
       {
@@ -98,7 +93,6 @@ export default {
       { text: "Notes", value: "notes" },
       { text: "Actions", value: "name", sortable: false }
     ],
-    absences: [],
     editedIndex: -1,
     editedItem: {
       reason: "",
@@ -113,41 +107,33 @@ export default {
       notes: ""
     }
   }),
+   computed: mapState({
+    absences: state => state.absence.allAbsences,
+    paginationInfo: state => state.absence.paginationInfo,
+  }),
 
   watch: {
     dialog(val) {
       val || this.close();
     },
     'paginationInfo.page'() {
-      this.getAbsences("");
+      this.getAbsences();
     }
   },
 
   created() {
-    this.getAbsences("");
+    this.getAbsences();
   },
 
   methods: {
-    //make action
-    getAbsences(dataFilter) {
-      const currentpage = this.paginationInfo.page - 1;
-      const limit = this.paginationInfo.limit;
+     ...mapActions({
+      getAbsences: "absence/getAbsences",
+      setPaginationInfo: "absence/setPaginationInfo" ,
+      setFilter: "absence/setFilter" ,
+    }),
 
-      const filter = `?limit=${limit}&offset=${currentpage *
-        limit}&${dataFilter}`;
-      absenceService.getAllAbsencesByUserId(filter).then(
-        data => {
-          this.$store.dispatch("absence/setAllAbsence", data.results);
-          this.absences = data.results;
-          this.setPagination({ count: Math.ceil(data.count / limit) });
-        },
-        () => {
-        }
-      );
-    },
-
-    setPagination(paginationInfo) {
-      this.paginationInfo = { ...this.paginationInfo, ...paginationInfo };
+    onSetPagination(paginationInfo) {
+      this.setPaginationInfo(paginationInfo);
     },
 
     editItem(item) {
@@ -159,7 +145,7 @@ export default {
     deleteItem(item) {
       absenceService.deleteAbsence(item.id).then(
         () => {
-          this.getAbsences("");
+          this.getAbsences();
         },
         () => {
         }
@@ -169,7 +155,7 @@ export default {
     changeStatus(item, status) {
       absenceService.changeStatus(item.id, {status}).then(
         () => {
-          this.getAbsences("");
+          this.getAbsences();
         },
         () => {
         }
