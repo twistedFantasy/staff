@@ -92,7 +92,11 @@ export default {
 }
 .v-tabs__bar.theme--light {
   background: none;
+ 
   border-bottom: 1px solid grey;
+}
+.theme--light.v-tabs__bar .v-tabs__div {
+ color: #66A4D4;
 }
 .tab-content {
   padding: 0 !important;

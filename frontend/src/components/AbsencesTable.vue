@@ -1,8 +1,8 @@
 <template>
   <div class="absence-table-container">
-    <v-dialog v-model="dialog" max-width="500px">
-      <v-btn slot="activator" color="primary" dark class="mb-2">Create Absence</v-btn>
-      <v-card>
+    <v-dialog  v-model="dialog" max-width="500px">
+      <v-btn slot="activator" color="primary" dark class="custom-btn mb-2">Create Absence</v-btn>
+      <v-card class="create-absance">
         <v-card-title>
           <span class="headline">Create Absence</span>
         </v-card-title>
@@ -36,7 +36,7 @@
     <div class="absence-table">
       <v-toolbar flat color="white" class="table-header">
         <v-toolbar-title>My Absences</v-toolbar-title>
-        <FiltersBar :setFilter="setFilter"/>
+        <FiltersBar :setFilter="setFilter" />
       </v-toolbar>
       <v-data-table :headers="headers" :items="absences" class="elevation-2" hide-actions>
         <template slot="items" slot-scope="props">
@@ -46,11 +46,30 @@
           <td class="text-xs-left">{{ props.item.end_date }}</td>
           <td class="text-xs-left">{{ props.item.notes }}</td>
           <td class="text-xs-left">
-            <v-icon v-if="props.item.status === 'new'" small class="mr-2" @click="changeStatus(props.item, 'verifying')">check_circle</v-icon>
-            <v-icon v-if="props.item.status === 'new'" small class="mr-2" @click="editItem(props.item)">edit</v-icon>
-            <v-icon v-if="props.item.status === 'new'" small @click="deleteItem(props.item)">delete</v-icon>
-            <v-icon v-if="props.item.status === 'verifying'" small @click="changeStatus(props.item, 'new')">block</v-icon>
-            
+            <v-icon
+              v-if="props.item.status === 'new'"
+              small
+              class="icon mr-2"
+              @click="changeStatus(props.item, 'verifying')"
+            >check_circle</v-icon>
+            <v-icon
+              v-if="props.item.status === 'new'"
+              small
+              class="icon mr-2"
+              @click="editItem(props.item)"
+            >edit</v-icon>
+            <v-icon
+              v-if="props.item.status === 'new'"
+              small
+              class="icon"
+              @click="deleteItem(props.item)"
+            >delete</v-icon>
+            <v-icon
+              v-if="props.item.status === 'verifying'"
+              class="icon"
+              small
+              @click="changeStatus(props.item, 'new')"
+            >block</v-icon>
           </td>
         </template>
       </v-data-table>
@@ -68,7 +87,7 @@
 
 <script>
 import * as absenceService from "../services/absence.service";
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions } from "vuex";
 import * as config from "@/config.js";
 import FiltersBar from "./FiltersBar";
 
@@ -81,7 +100,7 @@ export default {
     dialog: false,
     userProfile: {},
     headers: [
-      { text: "Status", value: 'status'},
+      { text: "Status", value: "status" },
       {
         text: "Reason",
         align: "left",
@@ -107,16 +126,16 @@ export default {
       notes: ""
     }
   }),
-   computed: mapState({
+  computed: mapState({
     absences: state => state.absence.allAbsences,
-    paginationInfo: state => state.absence.paginationInfo,
+    paginationInfo: state => state.absence.paginationInfo
   }),
 
   watch: {
     dialog(val) {
       val || this.close();
     },
-    'paginationInfo.page'() {
+    "paginationInfo.page"() {
       this.getAbsences();
     }
   },
@@ -126,10 +145,10 @@ export default {
   },
 
   methods: {
-     ...mapActions({
+    ...mapActions({
       getAbsences: "absence/getAbsences",
-      setPaginationInfo: "absence/setPaginationInfo" ,
-      setFilter: "absence/setFilter" ,
+      setPaginationInfo: "absence/setPaginationInfo",
+      setFilter: "absence/setFilter"
     }),
 
     onSetPagination(paginationInfo) {
@@ -147,18 +166,16 @@ export default {
         () => {
           this.getAbsences();
         },
-        () => {
-        }
+        () => {}
       );
     },
 
     changeStatus(item, status) {
-      absenceService.changeStatus(item.id, {status}).then(
+      absenceService.changeStatus(item.id, { status }).then(
         () => {
           this.getAbsences();
         },
-        () => {
-        }
+        () => {}
       );
     },
 
@@ -169,7 +186,7 @@ export default {
         this.editedIndex = -1;
       }, 300);
     },
-    
+
     //make action
     save() {
       const data = {
@@ -177,8 +194,8 @@ export default {
         start_date: this.editedItem.start_date,
         end_date: this.editedItem.end_date,
         notes: this.editedItem.notes,
-        status: 'new',
-        user: { id: this.$store.state.user.logedUserId}
+        status: "new",
+        user: { id: this.$store.state.user.logedUserId }
       };
       if (this.editedIndex == -1) {
         absenceService.createNewAbsence(data).then(
@@ -186,8 +203,7 @@ export default {
             this.getAbsences("");
             this.close();
           },
-          () => {
-          }
+          () => {}
         );
       } else {
         absenceService.editAbsence(data, this.editedItem.id).then(
@@ -195,8 +211,7 @@ export default {
             this.getAbsences("");
             this.close();
           },
-          () => {
-          }
+          () => {}
         );
       }
     }
@@ -210,15 +225,41 @@ move modal in diff component
 </script>
 
 <style>
+.icon,
+.theme--light.v-datatable thead th.column.sortable.active,
+.theme--light.v-datatable thead th.column.sortable.active .v-icon,
+.theme--light.v-datatable thead th.column.sortable {
+  color: #66a4d4 !important;
+}
+.primary.custom-btn {
+  background: rgba(117, 169, 209, 0.2) !important;
+  border-radius: 24px;
+  color: #66a4d4 !important;
+  font-size: 12px;
+}
+.theme--light.v-table tbody tr:hover:not(.v-datatable__expand-row) {
+  background: rgba(102, 164, 212, 0.5);
+  cursor: pointer;
+}
+.v-datatable.v-table.theme--light {
+  background: #003851;
+  color: #66a4d4;
+  border-radius: 10px;
+}
 .absence-table-container {
-   margin: 20px 40px 100px 40px;
+  margin: 20px 40px 100px 40px;
 }
 .absence-table-container .v-dialog__container {
   width: 100%;
   display: flex !important;
   justify-content: flex-end;
 }
-.table-header .v-toolbar__content{
+.table-header.v-toolbar.elevation-0.theme--light.white {
+  background: #003851 !important;
+  border-radius: 10px;
+  color: #66a4d4 !important;
+}
+.table-header .v-toolbar__content {
   width: 100%;
   display: grid;
   grid-template-columns: 2fr 8fr;
@@ -241,5 +282,18 @@ move modal in diff component
 .pagination {
   margin-top: 20px;
 }
+.theme--light.v-pagination .v-pagination__item,
+.v-pagination__navigation,
+.v-select__slot > label,
+.theme--light.v-label,
+.v-icon.material-icons.theme--light {
+  background: #003851 !important;
+  color: #66a4d4 !important;
+}
+.create-absance {
+  background:  rgba(102, 164, 212, 1)!important;
+ color: #66a4d4 !important;
+}
+
 </style>
 
