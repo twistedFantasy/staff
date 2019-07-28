@@ -284,8 +284,8 @@ move modal in diff component
 }
 .theme--light.v-pagination .v-pagination__item,
 .v-pagination__navigation,
-.v-select__slot > label,
-.theme--light.v-label,
+.absence-table .v-select__slot > label,
+.absence-table .theme--light.v-label,
 .v-icon.material-icons.theme--light {
   background: #003851 !important;
   color: #66a4d4 !important;
