@@ -56,8 +56,8 @@ export default {
         id: 3
       },
       {
-        name: "Assessment",
-        path: "Assessment",
+        name: "Assessments",
+        path: "Assessments",
         id: 4
       }
     ]

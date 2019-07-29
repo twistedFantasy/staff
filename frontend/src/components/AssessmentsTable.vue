@@ -1,15 +1,16 @@
 <template>
-  <div class="projects-table-container">
-    <div class="projects-table">
+  <div class="assessments-table-container">
+    <div class="assessments-table">
       <v-toolbar flat color="white" class="table-header">
-        <v-toolbar-title>My Projects</v-toolbar-title>
+        <v-toolbar-title>My assessments</v-toolbar-title>
       </v-toolbar>
-      <v-data-table :headers="headers" :items="projects" class="elevation-2" hide-actions>
+      <v-data-table :headers="headers" :items="assessments" class="elevation-2" hide-actions>
         <template slot="items" slot-scope="props">
-          <td>{{ props.item.name }}</td>
           <td>{{ props.item.status }}</td>
           <td class="text-xs-left">{{ props.item.start_date }}</td>
           <td class="text-xs-left">{{ props.item.end_date }}</td>
+           <td class="text-xs-left">{{ props.item.plan }}</td>
+            <td class="text-xs-left">{{ props.item.comments }}</td>
           <td class="text-xs-left">{{ props.item.notes }}</td>
         </template>
       </v-data-table>
@@ -40,28 +41,30 @@ export default {
       },
       { text: "Start Data", value: "start_date" },
       { text: "End Data", value: "end_date" },
+      { text: "Plan", value: "plan" },
+      { text: "Comments", value: "comments" },
       { text: "Descriptions", value: "notes" },
     ],
   }),
   computed: mapState({
-    projects: state => state.project.allProjects,
-    paginationInfo: state => state.project.paginationInfo
+    assessments: state => state.assessment.allAssessments,
+    paginationInfo: state => state.assessment.paginationInfo
   }),
 
   watch: {
     "paginationInfo.page"() {
-      this.getProjects();
+      this.getAssessments();
     }
   },
 
   created() {
-    this.getProjects();
+    this.getAssessments();
   },
 
   methods: {
     ...mapActions({
-      getProjects: "project/getProjects",
-      setPaginationInfo: "project/setPaginationInfo",
+      getAssessments: "assessment/getAssessments",
+      setPaginationInfo: "assessment/setPaginationInfo",
     }),
 
     onSetPagination(paginationInfo) {

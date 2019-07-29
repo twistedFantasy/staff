@@ -4,6 +4,9 @@ import Absences from '@/views/Absences.vue';
 import Profile from '@/views/Profile.vue';
 import Projects from '@/views/Projects.vue';
 import Home from '@/views/Home.vue';
+import Assessments from '@/views/Assessments.vue';
+
+
 Vue.use(Router);
 
 export default new Router({
@@ -31,6 +34,10 @@ export default new Router({
         {
           path: 'Projects',
           component: Projects,
+        },
+        {
+          path: 'Assessments',
+          component: Assessments,
         },
       ],
       component: Home,
