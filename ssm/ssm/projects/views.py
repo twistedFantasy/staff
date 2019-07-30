@@ -9,6 +9,7 @@ from ssm.projects.serializers import StaffProjectSerializer, ProjectSerializer, 
 from ssm.projects.permissions import IsProjectMemberOrStaff
 from ssm.projects.filters import ProjectFilterBackend
 from ssm.core.permissions import IsAllowedMethodOrStaff
+from ssm.core.helpers import true
 
 
 class ProjectViewSet(ModelViewSet):
@@ -20,6 +21,6 @@ class ProjectViewSet(ModelViewSet):
     ordering = ['name']
 
     def get_serializer_class(self):
-        if 'members' in self.request.query_params:
+        if 'members' not in self.request.query_params or true(self.request.query_params.get('members')):
             return StaffProjectWithMembersSerializer if self.request.user.is_staff else ProjectWithMembersSerialize
         return StaffProjectSerializer if self.request.user.is_staff else ProjectSerializer

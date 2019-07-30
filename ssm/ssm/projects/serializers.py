@@ -4,6 +4,10 @@ from drf_dynamic_fields import DynamicFieldsMixin
 from ssm.projects.models import Project, MembersModel
 
 
+FIELDS = ['id', 'name', 'description', 'specification', 'start_date', 'end_date', 'status']
+READ_ONLY_FIELDS = ['id', 'name', 'description', 'specification', 'start_date', 'end_date', 'status']
+
+
 class StaffMembersSerializer(ModelSerializer):
     user_name = ReadOnlyField(source='user.full_name')
 
@@ -22,15 +26,13 @@ class StaffProjectSerializer(DynamicFieldsMixin, ModelSerializer):
 
     class Meta:
         model = Project
-        fields = ['name', 'description', 'specification']
+        fields = FIELDS
 
 
 class ProjectSerializer(StaffProjectSerializer):
 
     class Meta(StaffProjectSerializer.Meta):
-        read_only_fields = [
-            'name', 'description', 'specification', 'start_date', 'end_date', 'status', 'estimation_in_man_hours',
-        ]
+        read_only_fields = READ_ONLY_FIELDS
 
 
 class StaffProjectWithMembersSerializer(StaffProjectSerializer):
