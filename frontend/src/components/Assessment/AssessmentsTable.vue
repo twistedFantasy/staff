@@ -142,7 +142,6 @@ move modal in diff component
 .absence-table .v-select__slot > label,
 .absence-table .theme--light.v-label,
 .v-icon.material-icons.theme--light {
-  background: #003851 !important;
   color: #66a4d4 !important;
 }
 .create-absance {

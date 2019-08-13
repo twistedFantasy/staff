@@ -6,7 +6,7 @@
 
 
 <script>
-import Projects from "@/components/ProjectsTable.vue";
+import Projects from "@/components/Project/ProjectsTable.vue";
 
 export default {
   

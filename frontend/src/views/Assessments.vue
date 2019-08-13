@@ -6,7 +6,7 @@
 
 
 <script>
-import Assessments from "@/components/AssessmentsTable.vue";
+import Assessments from "@/components/Assessment/AssessmentsTable.vue";
 
 export default {
   
