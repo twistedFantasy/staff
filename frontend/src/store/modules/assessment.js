@@ -4,6 +4,7 @@ import * as assessmentService from "@/services/assessment.service";
 // shape: [{ id, quantity }]
 const state = {
   allAssessments: [],
+  allCheckpoints: [],
   paginationInfo: {
     page: 1,
     limit: 5,
@@ -43,11 +44,30 @@ const actions = {
       () => {
       }
     );
+  },
+  setAllCheckoints ({ commit }, listOfCheckpoints) {
+    commit('setAllCheckoints', listOfCheckpoints)
+  },
+
+  getCheckpoints({state, dispatch}, router) {
+    // const assesmentId = router.params.id;
+    const filter = `?limit=${10}`;
+    assessmentService.getAllCheckpoints(filter).then(
+      data => {
+        dispatch("setAllCheckoints", data.results);
+        //dispatch("setPaginationInfo", { count: Math.ceil(data.count / limit) });
+      },
+      () => {
+      }
+    );
   }
 }
 
 // mutations
 const mutations = {
+  setAllCheckoints (state, listOfCheckpoints ) {
+    state.allCheckpoints = listOfCheckpoints;
+  },
 
   setAllAssessments (state, listOfAssessments ) {
     state.allAssessments = listOfAssessments;

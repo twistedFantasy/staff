@@ -114,7 +114,7 @@ export default {
   color: white !important;
 }
 
-.theme--light.v-input:not(.v-input--is-disabled) input{
-color: #66a4d4 !important;
+.theme--light.v-input:not(.v-input--is-disabled) input {
+  color: #66a4d4 !important;
 }
 </style>
