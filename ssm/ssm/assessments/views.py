@@ -6,7 +6,7 @@ from rest_framework.viewsets import ModelViewSet
 from ssm.assessments.models import Assessment, Checkpoint, Task
 from ssm.assessments.serializers import StaffAssessmentSerializer, AssessmentSerializer, StaffCheckpointSerializer, \
     CheckpointSerializer, StaffTaskSerializer, TaskSerializer
-from ssm.assessments.filters import CheckpointFilterBackend, TaskFilterBackend
+from ssm.assessments.filters import CheckpointFilterBackend, TaskFilterBackend, CheckpointFilter, TaskFilter
 from ssm.users.filters import UserFilterBackend
 from ssm.core.permissions import IsAllowedMethodOrStaff, IsObjectOwnerOrStaff
 
@@ -25,6 +25,7 @@ class CheckpointViewSet(ModelViewSet):
     queryset = Checkpoint.objects.all()
     permission_classes = [IsAuthenticated, IsAllowedMethodOrStaff]
     filter_backends = [CheckpointFilterBackend, DjangoFilterBackend, OrderingFilter]
+    filterset_class = CheckpointFilter
 
     def get_serializer_class(self):
         return StaffCheckpointSerializer if self.request.user.is_staff else CheckpointSerializer
@@ -34,6 +35,7 @@ class TaskViewSet(ModelViewSet):
     queryset = Task.objects.all()
     permission_classes = [IsAuthenticated, IsObjectOwnerOrStaff]
     filter_backends = [TaskFilterBackend, DjangoFilterBackend, OrderingFilter]
+    filterset_class = TaskFilter
 
     def get_serializer_class(self):
         return StaffTaskSerializer if self.request.user.is_staff else TaskSerializer
