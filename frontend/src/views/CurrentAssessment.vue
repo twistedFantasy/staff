@@ -1,18 +1,18 @@
 <template>
   <div class="assessments">
-    <Assessments />
+    <CurrentAssessment />
   </div>
 </template>
 
 
 <script>
-import Assessments from "@/components/Assessment/AssessmentsTable.vue";
+import CurrentAssessment from "@/components/Assessment/CurrentAssessment.vue";
 
 export default {
   
-  name: "projects",
+  name: "currentAssessment",
   components: {
-    Assessments
+    CurrentAssessment
   },
 }
 </script>

@@ -5,13 +5,15 @@
         <v-toolbar-title>My assessments</v-toolbar-title>
       </v-toolbar>
       <v-data-table :headers="headers" :items="assessments" class="elevation-2" hide-actions>
-        <template slot="items" slot-scope="props">
+        <template slot="items" slot-scope="props" >
+        <tr @click="$router.push(`/Home/Assessment/${props.item.id}`)">
           <td>{{ props.item.status }}</td>
           <td class="text-xs-left">{{ props.item.start_date }}</td>
           <td class="text-xs-left">{{ props.item.end_date }}</td>
            <td class="text-xs-left">{{ props.item.plan }}</td>
             <td class="text-xs-left">{{ props.item.comments }}</td>
           <td class="text-xs-left">{{ props.item.notes }}</td>
+          </tr>
         </template>
       </v-data-table>
     </div>
@@ -142,7 +144,6 @@ move modal in diff component
 .absence-table .v-select__slot > label,
 .absence-table .theme--light.v-label,
 .v-icon.material-icons.theme--light {
-  background: #003851 !important;
   color: #66a4d4 !important;
 }
 .create-absance {
