@@ -1,38 +1,6 @@
 <template>
   <div class="absence-table-container">
-    <v-dialog  v-model="dialog" max-width="500px">
-      <v-btn slot="activator" color="primary" dark class="custom-btn mb-2">Create Absence</v-btn>
-      <v-card class="create-absance">
-        <v-card-title>
-          <span class="headline">Create Absence</span>
-        </v-card-title>
-
-        <v-card-text>
-          <v-container grid-list-md>
-            <v-layout wrap>
-              <v-flex xs12 sm6 d-flex>
-                <v-select :items="absenceReasonOptions" label="Reason" v-model="editedItem.reason"></v-select>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-text-field v-model="editedItem.start_date" label="Start Data"></v-text-field>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-text-field v-model="editedItem.end_date" label="End Data"></v-text-field>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-text-field v-model="editedItem.notes" label="Notes"></v-text-field>
-              </v-flex>
-            </v-layout>
-          </v-container>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" flat @click="close">Cancel</v-btn>
-          <v-btn color="blue darken-1" flat @click="save">Save</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <CreateAbsence :getAbsences="getAbsences"/>
     <div class="absence-table">
       <v-toolbar flat color="white" class="table-header">
         <v-toolbar-title>My Absences</v-toolbar-title>
@@ -86,19 +54,18 @@
 </template>
 
 <script>
-import * as absenceService from "../services/absence.service";
+import * as absenceService from "@/services/absence.service";
 import { mapState, mapActions } from "vuex";
 import * as config from "@/config.js";
 import FiltersBar from "./FiltersBar";
+import CreateAbsence from './CreateAbsence';
 
 export default {
   components: {
-    FiltersBar
+    FiltersBar,
+    CreateAbsence,
   },
   data: () => ({
-    absenceReasonOptions: config.absenceReasonOptions,
-    dialog: false,
-    userProfile: {},
     headers: [
       { text: "Status", value: "status" },
       {
@@ -111,20 +78,7 @@ export default {
       { text: "End Data", value: "end_date" },
       { text: "Notes", value: "notes" },
       { text: "Actions", value: "name", sortable: false }
-    ],
-    editedIndex: -1,
-    editedItem: {
-      reason: "",
-      start_date: 0,
-      end_date: 0,
-      notes: ""
-    },
-    defaultItem: {
-      reason: "",
-      start_date: 0,
-      end_date: 0,
-      notes: ""
-    }
+    ]
   }),
   computed: mapState({
     absences: state => state.absence.allAbsences,
@@ -132,9 +86,6 @@ export default {
   }),
 
   watch: {
-    dialog(val) {
-      val || this.close();
-    },
     "paginationInfo.page"() {
       this.getAbsences();
     }
@@ -155,12 +106,6 @@ export default {
       this.setPaginationInfo(paginationInfo);
     },
 
-    editItem(item) {
-      this.editedIndex = this.absences.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialog = true;
-    },
-
     deleteItem(item) {
       absenceService.deleteAbsence(item.id).then(
         () => {
@@ -177,51 +122,9 @@ export default {
         },
         () => {}
       );
-    },
-
-    close() {
-      this.dialog = false;
-      setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      }, 300);
-    },
-
-    //make action
-    save() {
-      const data = {
-        reason: this.editedItem.reason,
-        start_date: this.editedItem.start_date,
-        end_date: this.editedItem.end_date,
-        notes: this.editedItem.notes,
-        status: "new",
-        user: { id: this.$store.state.user.logedUserId }
-      };
-      if (this.editedIndex == -1) {
-        absenceService.createNewAbsence(data).then(
-          () => {
-            this.getAbsences("");
-            this.close();
-          },
-          () => {}
-        );
-      } else {
-        absenceService.editAbsence(data, this.editedItem.id).then(
-          () => {
-            this.getAbsences("");
-            this.close();
-          },
-          () => {}
-        );
-      }
     }
   }
 };
-
-/*
-move modal in diff component
-
-*/
 </script>
 
 <style>
@@ -287,12 +190,8 @@ move modal in diff component
 .absence-table .v-select__slot > label,
 .absence-table .theme--light.v-label,
 .v-icon.material-icons.theme--light {
-  background: #003851 !important;
+  background: unset !important;
   color: #66a4d4 !important;
-}
-.create-absance {
-  background:  rgba(102, 164, 212, 1)!important;
- color: #66a4d4 !important;
 }
 
 </style>

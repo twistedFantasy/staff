@@ -146,10 +146,6 @@ move modal in diff component
 .v-icon.material-icons.theme--light {
   color: #66a4d4 !important;
 }
-.create-absance {
-  background:  rgba(102, 164, 212, 1)!important;
- color: #66a4d4 !important;
-}
 
 </style>
 

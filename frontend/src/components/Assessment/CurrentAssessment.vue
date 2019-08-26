@@ -122,10 +122,6 @@ export default {
 .checkpoint-data {
   margin-right: 22px;
 }
-.v-card__text {
-  background: #12466edb;
-  color: #66a4d4;
-}
 .task-container {
   padding: 10px;
   border-bottom: 1px solid #66a4d4;

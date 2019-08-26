@@ -39,10 +39,13 @@
             prepend-icon="event"
             readonly
           ></v-text-field>
-          <v-date-picker v-model="filter.start_date" @input="$refs.menu1.save(filter.start_date);setFilter({start_date: filter.start_date}) "></v-date-picker>
+          <v-date-picker
+            v-model="filter.start_date"
+            @input="$refs.menu1.save(filter.start_date);setFilter({start_date: filter.start_date}) "
+          ></v-date-picker>
         </v-menu>
       </v-flex>
-         <v-flex>
+      <v-flex>
         <v-menu
           ref="menu2"
           :close-on-content-click="false"
@@ -62,7 +65,10 @@
             prepend-icon="event"
             readonly
           ></v-text-field>
-          <v-date-picker v-model="filter.end_date" @input="$refs.menu2.save(filter.end_date);setFilter({end_date: filter.end_date}) "></v-date-picker>
+          <v-date-picker
+            v-model="filter.end_date"
+            @input="$refs.menu2.save(filter.end_date);setFilter({end_date: filter.end_date}) "
+          ></v-date-picker>
         </v-menu>
       </v-flex>
     </div>
@@ -110,12 +116,12 @@ export default {
   grid-template-columns: 9fr 1fr;
 }
 .theme--light.v-input:not(.v-input--is-disabled) input {
-  color: #66A4D4;
+  color: #66a4d4;
 }
 .v-menu__content {
-  box-shadow: none!important;
+  box-shadow: none !important;
 }
- .v-picker__title.primary {
-   background-color: #003851 !important;
+.v-picker__title.primary {
+  background-color: #003851 !important;
 }
 </style>
