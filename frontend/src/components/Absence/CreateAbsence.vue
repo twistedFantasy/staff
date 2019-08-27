@@ -88,7 +88,7 @@ import { mapState, mapActions } from "vuex";
 import * as config from "@/config.js";
 
 export default {
-   props: {
+  props: {
     getAbsences: { type: Function }
   },
   data: () => ({
@@ -183,8 +183,11 @@ export default {
 .theme--light.v-label {
   color: #001c29 !important;
 }
+.create-absence-dialog .blue--text.text--darken-1 {
+  color: #001c29 !important;
+}
 .v-list .theme--light {
-  background: #c2e4ff!important;
+  background: #c2e4ff !important;
 }
 </style>
 

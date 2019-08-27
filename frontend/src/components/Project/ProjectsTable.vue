@@ -6,11 +6,19 @@
       </v-toolbar>
       <v-data-table :headers="headers" :items="projects" class="elevation-2" hide-actions>
         <template slot="items" slot-scope="props">
-          <td>{{ props.item.name }}</td>
-          <td>{{ props.item.status }}</td>
-          <td class="text-xs-left">{{ props.item.start_date }}</td>
-          <td class="text-xs-left">{{ props.item.end_date }}</td>
-          <td class="text-xs-left">{{ props.item.notes }}</td>
+          <tr @click="props.expanded = !props.expanded">
+            <td class="text-xs-left">{{ props.item.name }}</td>
+            <td class="text-xs-left">{{ props.item.status }}</td>
+            <td class="text-xs-left">{{ props.item.start_date }}</td>
+            <td class="text-xs-left">{{ props.item.end_date }}</td>
+            <td class="text-xs-left">{{ props.item.specification }}</td>
+            <td class="text-xs-left description">{{ props.item.description }}</td>
+          </tr>
+        </template>
+        <template slot="expand" slot-scope="props">
+          <v-card flat>
+            <v-card-text>{{props.item.description}}</v-card-text>
+          </v-card>
         </template>
       </v-data-table>
     </div>
@@ -31,17 +39,17 @@ import { mapState, mapActions } from "vuex";
 export default {
   data: () => ({
     headers: [
-      { text: "Name", value: "name" },
+      { text: "Name", value: "name", align: "left" },
       {
         text: "Status",
-        align: "left",
         sortable: true,
         value: "status"
       },
       { text: "Start Data", value: "start_date" },
       { text: "End Data", value: "end_date" },
-      { text: "Descriptions", value: "notes" },
-    ],
+      { text: "Specification", value: "specification" },
+      { text: "Description", value: "descriptions" }
+    ]
   }),
   computed: mapState({
     projects: state => state.project.allProjects,
@@ -61,19 +69,14 @@ export default {
   methods: {
     ...mapActions({
       getProjects: "project/getProjects",
-      setPaginationInfo: "project/setPaginationInfo",
+      setPaginationInfo: "project/setPaginationInfo"
     }),
 
     onSetPagination(paginationInfo) {
       this.setPaginationInfo(paginationInfo);
-    },
+    }
   }
 };
-
-/*
-move modal in diff component
-
-*/
 </script>
 
 <style>
@@ -133,6 +136,12 @@ move modal in diff component
 }
 .pagination {
   margin-top: 20px;
+}
+.description {
+  max-width: 500px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 </style>
 

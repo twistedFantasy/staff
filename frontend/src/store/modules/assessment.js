@@ -6,6 +6,7 @@ const state = {
   allAssessments: [],
   allCheckpoints: [],
   tasksOfCheckpoint: [],
+  currentAssessment: {},
   paginationInfo: {
     page: 1,
     limit: 5,
@@ -46,6 +47,11 @@ const actions = {
       }
     );
   },
+   
+  setCurrentAssessment ({commit}, currentAssessment) {
+    commit('setCurrentAssessment', currentAssessment)
+  },
+
   setAllCheckoints ({ commit }, listOfCheckpoints) {
     commit('setAllCheckoints', listOfCheckpoints)
   },
@@ -92,6 +98,9 @@ const mutations = {
   },
   setAllTasks (state, tasks ) {
     state.tasksOfCheckpoint = {...state.tasksOfCheckpoint, ...tasks};
+  },
+  setCurrentAssessment (state, assessment ) {
+    state.currentAssessment = {...state.currentAssessment, ...assessment};
   },
 }
 
