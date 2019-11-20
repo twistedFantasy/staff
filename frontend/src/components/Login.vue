@@ -9,13 +9,12 @@
             <v-container>
               <v-layout>
                 <v-flex xs12 md6>
-                  <v-text-field v-model="email" :counter="10" label="Email" required></v-text-field>
+                  <v-text-field v-model="email" label="Email" required></v-text-field>
                 </v-flex>
                 <v-flex xs12 md6>
                   <v-text-field
                     type="password"
                     v-model="password"
-                    :counter="10"
                     label="Password"
                     required
                   ></v-text-field>

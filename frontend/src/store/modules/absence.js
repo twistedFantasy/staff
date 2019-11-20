@@ -25,9 +25,7 @@ const getters = {
 // actions
 const actions = {
   setAllAbsence ({ commit }, listAbsences) {
-    if(listAbsences.length) {
     commit('setAllAbsence', listAbsences)
-    }
   },
 
   setPaginationInfo ({ commit }, paginationInfo) {

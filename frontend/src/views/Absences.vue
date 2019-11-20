@@ -6,7 +6,7 @@
 
 
 <script>
-import AbsencesTable from "@/components/AbsencesTable.vue";
+import AbsencesTable from "@/components/Absence/AbsencesTable.vue";
 
 export default {
   name: "absencesTable",

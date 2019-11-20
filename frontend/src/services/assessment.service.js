@@ -9,3 +9,7 @@ export const getAllAssessmentsByUserId = (dataFilter) => {
 export const getAllCheckpoints = (filter) => {
   return http.get(`${API_URL}/api/v1/checkpoints/${filter}`)
 }
+
+export const getAllTasks = (filter) => {
+  return http.get(`${API_URL}/api/v1/tasks/${filter}`)
+}

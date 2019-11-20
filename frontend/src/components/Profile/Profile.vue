@@ -25,11 +25,10 @@
       <div class="field">Has key :</div>
       <div class="value">{{userProfile.has_key ? 'yes' : 'no'}}</div>
     </div>
-    <SkillsPage/>
+    <SkillsPage />
   </div>
 </template>
 <script>
-
 import { mapState } from "vuex";
 import SkillsPage from "./SkillsPage";
 import EditProfileForm from "./EditProfileForm";
@@ -37,14 +36,12 @@ import EditProfileForm from "./EditProfileForm";
 export default {
   components: {
     SkillsPage,
-    EditProfileForm,
+    EditProfileForm
   },
-  data: () => ({
-   
-  }),
- computed: mapState({
+  data: () => ({}),
+  computed: mapState({
     userProfile: state => state.user.userProfile
-  }),
+  })
 };
 </script>
 
@@ -63,5 +60,8 @@ export default {
 .value {
   font-size: 16px;
   margin-left: 10px;
+}
+.profile .theme--dark.v-btn:not(.v-btn--icon):not(.v-btn--flat) {
+  background: #66a4d4 !important;
 }
 </style>

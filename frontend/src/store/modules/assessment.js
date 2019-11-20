@@ -5,6 +5,8 @@ import * as assessmentService from "@/services/assessment.service";
 const state = {
   allAssessments: [],
   allCheckpoints: [],
+  tasksOfCheckpoint: [],
+  currentAssessment: {},
   paginationInfo: {
     page: 1,
     limit: 5,
@@ -45,6 +47,11 @@ const actions = {
       }
     );
   },
+   
+  setCurrentAssessment ({commit}, currentAssessment) {
+    commit('setCurrentAssessment', currentAssessment)
+  },
+
   setAllCheckoints ({ commit }, listOfCheckpoints) {
     commit('setAllCheckoints', listOfCheckpoints)
   },
@@ -60,6 +67,20 @@ const actions = {
       () => {
       }
     );
+  },
+  getTasksByCheckpoints({state, dispatch}, checkpointId) {
+    const filter = `?checkpoint_id=${checkpointId}&limit=${10}`;
+    assessmentService.getAllTasks(filter).then(
+      data => {
+        dispatch("setAllTasks", data.results);
+        //dispatch("setPaginationInfo", { count: Math.ceil(data.count / limit) });
+      },
+      () => {
+      }
+    );
+  },
+  setAllTasks({ commit }, listOfTasks) {
+    commit('setAllTasks', listOfTasks)
   }
 }
 
@@ -74,6 +95,12 @@ const mutations = {
   },
   setPaginationInfo (state, paginationInfo ) {
     state.paginationInfo = {...state.paginationInfo, ...paginationInfo};
+  },
+  setAllTasks (state, tasks ) {
+    state.tasksOfCheckpoint = {...state.tasksOfCheckpoint, ...tasks};
+  },
+  setCurrentAssessment (state, assessment ) {
+    state.currentAssessment = {...state.currentAssessment, ...assessment};
   },
 }
 

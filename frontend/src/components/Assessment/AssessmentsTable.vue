@@ -5,14 +5,16 @@
         <v-toolbar-title>My assessments</v-toolbar-title>
       </v-toolbar>
       <v-data-table :headers="headers" :items="assessments" class="elevation-2" hide-actions>
-        <template slot="items" slot-scope="props" >
-        <tr @click="$router.push(`/Home/Assessment/${props.item.id}`)">
-          <td>{{ props.item.status }}</td>
-          <td class="text-xs-left">{{ props.item.start_date }}</td>
-          <td class="text-xs-left">{{ props.item.end_date }}</td>
-           <td class="text-xs-left">{{ props.item.plan }}</td>
-            <td class="text-xs-left">{{ props.item.comments }}</td>
-          <td class="text-xs-left">{{ props.item.notes }}</td>
+        <template slot="items" slot-scope="props">
+          <tr
+            @click="$router.push(`/Home/Assessment/${props.item.id}`); setCurrentAssessment(props.item)"
+          >
+            <td>{{ props.item.status }}</td>
+            <td class="text-xs-left">{{ props.item.start_date }}</td>
+            <td class="text-xs-left">{{ props.item.end_date }}</td>
+            <td class="text-xs-left more">{{ props.item.plan }}</td>
+            <td class="text-xs-left more">{{ props.item.comments }}</td>
+            <td class="text-xs-left more">{{ props.item.notes }}</td>
           </tr>
         </template>
       </v-data-table>
@@ -34,7 +36,6 @@ import { mapState, mapActions } from "vuex";
 export default {
   data: () => ({
     headers: [
-      { text: "Name", value: "name" },
       {
         text: "Status",
         align: "left",
@@ -45,8 +46,8 @@ export default {
       { text: "End Data", value: "end_date" },
       { text: "Plan", value: "plan" },
       { text: "Comments", value: "comments" },
-      { text: "Descriptions", value: "notes" },
-    ],
+      { text: "Descriptions", value: "notes" }
+    ]
   }),
   computed: mapState({
     assessments: state => state.assessment.allAssessments,
@@ -67,18 +68,14 @@ export default {
     ...mapActions({
       getAssessments: "assessment/getAssessments",
       setPaginationInfo: "assessment/setPaginationInfo",
+      setCurrentAssessment: "assessment/setCurrentAssessment"
     }),
 
     onSetPagination(paginationInfo) {
       this.setPaginationInfo(paginationInfo);
-    },
+    }
   }
 };
-
-/*
-move modal in diff component
-
-*/
 </script>
 
 <style>
@@ -146,10 +143,11 @@ move modal in diff component
 .v-icon.material-icons.theme--light {
   color: #66a4d4 !important;
 }
-.create-absance {
-  background:  rgba(102, 164, 212, 1)!important;
- color: #66a4d4 !important;
+.more {
+  max-width: 250px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
-
 </style>
 
