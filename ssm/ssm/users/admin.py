@@ -42,7 +42,7 @@ class UserAdmin(UserAdmin):
     ordering = ['-modified']
     filter_horizontal = []
     show_full_result_count = False
-    actions = ['notify_users']
+    actions = []
 
 
 admin.site.unregister(Group)

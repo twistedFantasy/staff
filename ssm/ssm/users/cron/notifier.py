@@ -7,7 +7,7 @@ from ssm.users.models import User, BIRTHDAY, ASSESSMENT
 
 class Notifier:
 
-    def run(self):
+    def run(self) -> None:
         users = User.objects.all()
         for user in users:
             if user.is_birthday():

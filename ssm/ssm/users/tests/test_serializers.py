@@ -1,14 +1,35 @@
 import pytest
 
+from django.test import TestCase
 from django.db.utils import IntegrityError
 
 from ssm.skills.models import Skill, UserSkillModel
-from ssm.users.serializers import StaffUserWithSkillsSerializer, UserWithSkillsSerializer
+from ssm.users.serializers import ChangePasswordSerializer, StaffUserWithSkillsSerializer, UserWithSkillsSerializer
 from ssm.users.tests.factories import StaffUserFactory, UserFactory
-from ssm.core.tests import BaseTestCase
 
 
-class UserWithSkillsSerializerTestCase(BaseTestCase):
+class ChangePasswordSerializerTestCase(TestCase):
+
+    def test_no_data(self):
+        serializer = ChangePasswordSerializer(data={"old_password": "", "new_password": ""})
+        assert not serializer.is_valid()
+
+    def test_no_old_password(self):
+        serializer = ChangePasswordSerializer(data={"old_password": "", "new_password": "new_password53"})
+        assert not serializer.is_valid()
+
+    def test_no_new_password(self):
+        serializer = ChangePasswordSerializer(data={"old_password": "old_password53", "new_password": ""})
+        assert not serializer.is_valid()
+
+    def test_valid(self):
+        serializer = ChangePasswordSerializer(
+            data={"old_password": "old_password53", "new_password": "new_password53"}
+        )
+        assert serializer.is_valid()
+
+
+class UserWithSkillsSerializerTestCase(TestCase):
 
     def setUp(self):
         self.staff_user = StaffUserFactory()

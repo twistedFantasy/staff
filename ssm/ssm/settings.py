@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'rest_framework',
     'django_filters',
-    'rest_framework_filters',
 
     # ssm
     'ssm.core.apps.Config',

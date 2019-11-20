@@ -1,5 +1,7 @@
 # ide
 .idea
+.env
+cdk.out
 
 # custom
 .vagrant

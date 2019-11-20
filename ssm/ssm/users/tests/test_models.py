@@ -3,7 +3,7 @@ from django.core import mail
 from django.test import TestCase
 from django.conf import settings
 
-from ssm.users.models import BIRTHDAY, ASSESSMENT
+from ssm.users.models import User, BIRTHDAY, ASSESSMENT
 from ssm.users.tests.factories import UserFactory
 from ssm.core.helpers import today, Day
 
@@ -11,10 +11,19 @@ from ssm.core.helpers import today, Day
 class UserTestCase(TestCase):
 
     def setUp(self):
-        self.user = UserFactory(email='UserTestCase@gmail.com')
+        self.user = UserFactory(email='ethan.elliott@gmail.com', full_name='Ethan Elliott')
 
     def test_str(self):
         assert str(self.user) == f'{self.user.get_full_name()} (user {self.user.id})'
+
+    def test_create(self):
+        user = User.objects.create(email='aryan.barber@gmail.com', full_name='Aryan Barber')
+        assert user.id
+        assert user.is_active
+        assert not user.is_staff
+        assert not user.is_superuser
+        assert user.email == 'aryan.barber@gmail.com'
+        assert user.full_name == 'Aryan Barber'
 
     def test_is_birthday__true(self):
         self.user.date_of_birth = today()

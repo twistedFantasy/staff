@@ -7,7 +7,7 @@ from ssm.core.manage import register
 class Example(Task):
     abstract = False
 
-    def run(self, *args, **kwargs):
+    def run(self, *args, **kwargs) -> None:
         pass
 
 

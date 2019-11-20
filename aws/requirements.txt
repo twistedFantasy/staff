@@ -1,0 +1,11 @@
+-e .
+pytest
+pydevd-pycharm~=192.7142.42
+aws-cdk.aws-ssm==1.17.1
+aws-cdk.aws-iam==1.17.1
+aws-cdk.aws-s3==1.17.1
+aws-cdk.aws-ecs==1.17.1
+aws-cdk.aws-ecs-patterns==1.17.1
+aws-cdk.aws-ec2==1.17.1
+aws-cdk.aws-rds==1.17.1
+aws-cdk.aws-elasticache==1.17.1

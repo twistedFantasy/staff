@@ -4,13 +4,19 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.status import HTTP_200_OK, HTTP_404_NOT_FOUND
+from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 
 
 from ssm.users.models import User
 from ssm.users.filters import UserFilter
-from ssm.users.serializers import SSMTokenObtainPairSerializer, UserSerializer, UserWithSkillsSerializer, \
-    StaffUserSerializer, StaffUserWithSkillsSerializer
+from ssm.users.serializers import (
+    SSMTokenObtainPairSerializer,
+    ChangePasswordSerializer,
+    UserSerializer,
+    UserWithSkillsSerializer,
+    StaffUserSerializer,
+    StaffUserWithSkillsSerializer,
+)
 from ssm.users.permissions import UserCustomIsAllowedMethodOrStaff, IsCurrentUserOrStaff
 from ssm.core.helpers import true
 from ssm.core.filters import ObjectFieldFilterBackend
@@ -26,12 +32,19 @@ class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
 
     def patch(self, request, *args, **kwargs):
-        password = request.data.get('password')
-        if not password:
-            return Response({'msg': 'password param required'}, status=HTTP_404_NOT_FOUND)
-        request.user.set_password(password)
-        request.user.save(update_fields=['password'])
-        return Response({'msg': 'password successfully updated'}, status=HTTP_200_OK)
+        serializer = ChangePasswordSerializer(data=request.data)
+
+        if serializer.is_valid():
+            old_password = serializer.data["old_password"]
+            new_password = serializer.data["new_password"]
+            if not self.request.user.check_password(old_password):
+                return Response({"old_password": ["Wrong password"]}, status=HTTP_400_BAD_REQUEST)
+            if new_password == old_password:
+                return Response({"new_password": ["Password should be different"]}, status=HTTP_400_BAD_REQUEST)
+            self.request.user.set_password(serializer.data["new_password"])
+            self.request.user.save(update_fields=["password"])
+            return Response(status=HTTP_200_OK)
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 
 class UserViewSet(ModelViewSet):

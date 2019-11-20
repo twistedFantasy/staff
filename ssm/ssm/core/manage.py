@@ -1,5 +1,10 @@
 from celery import current_app
 
+from ssm.core.helpers import get_logger
+
+
+logger = get_logger(__name__)
+
 
 class register:
     """ Decorator for class tasks to name and register them. """
@@ -9,5 +14,5 @@ class register:
         try:
             current_app.tasks.register(cls())
         except Exception as e:
-            print(e)  # FIXME: logger
+            logger.error(e, f'unable to register celery task {cls.name}')
         return cls

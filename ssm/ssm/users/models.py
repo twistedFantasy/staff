@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.db import models
 from django.conf import settings
 from django.core.mail import send_mail
@@ -62,6 +64,8 @@ class User(AbstractBaseUser, BaseModel):
     phone_number2 = models.CharField('Phone Number 2', max_length=32, null=True, blank=True)
     has_card = models.BooleanField('Has Card', default=False)
     has_key = models.BooleanField('Has Key', default=False)
+    has_key2 = models.BooleanField('Has Key #2', default=False)
+    has_key3 = models.BooleanField('Has Key #3', default=False)
     skype = models.CharField('Skype', max_length=32, null=True, blank=True)
     working_hours = models.IntegerField('Working Hours', default=8)
     skills = models.ManyToManyField('skills.Skill', through='skills.UserSkillModel')
@@ -76,39 +80,39 @@ class User(AbstractBaseUser, BaseModel):
         verbose_name_plural = 'Users'
         ordering = ['-modified']
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'{self.get_full_name()} (user {self.id})'
 
-    def get_full_name(self):
+    def get_full_name(self) -> str:
         return self.full_name
 
-    def get_short_name(self):
+    def get_short_name(self) -> str:
         return self.email
 
-    def has_perm(self, perm, obj=None):
+    def has_perm(self, perm, obj=None) -> bool:
         return True
 
-    def has_module_perms(self, app_label):
+    def has_module_perms(self, app_label) -> bool:
         return True
 
-    def get_expected_hours(self):
-        pass # working_hours * (current_month/period_amount_of_working_days - absences)
+    def get_expected_hours(self) -> int:
+        pass  # working_hours * (current_month/period_amount_of_working_days - absences)
 
-    def is_birthday(self):
+    def is_birthday(self) -> bool:
         date_of_birth = self.date_of_birth if self.date_of_birth else None
         birthday_notification = self.birthday_notification if self.birthday_notification else None
         return date_of_birth == today() and birthday_notification != today()
 
-    def is_assessment(self):
+    def is_assessment(self) -> bool:
         from ssm.assessments.models import Assessment
         assessment_notificaiton = self.assessment_notification if self.assessment_notification else None
         return Assessment.objects.filter(user=self, end_date=today()) and assessment_notificaiton != today()
 
-    def notify(self, notification):
+    def notify(self, notification: str) -> None:
         if notification not in NOTIFICATIONS:
             raise Exception('Unknown notification type')
         subject, text = NOTIFICATIONS[notification]['subject'], NOTIFICATIONS[notification]['text']
         send_mail(subject, text, settings.DEFAULT_FROM_EMAIL, [self.email])
 
-    def get_working_hours(self, start_date, end_date):
+    def get_working_hours(self, start_date: date, end_date: date) -> int:
         return self.working_hours * 21

@@ -36,7 +36,7 @@ class ProjectTestCase(BaseTestCase):
         response = self.client.get(self.get_list_url())
         assert response.status_code == HTTP_200_OK
         assert len(response.data['results']) == 2
-        assert all('members' not in value for value in response.data['results'])
+        assert all('members' in value for value in response.data['results'])
 
     def test_get_serializer_class__staff_request__projects__with_members(self):
         self.client.force_authenticate(self.staff_user)
@@ -50,7 +50,7 @@ class ProjectTestCase(BaseTestCase):
         response = self.client.get(self.get_list_url())
         assert response.status_code == HTTP_200_OK
         assert len(response.data['results']) == 2
-        assert all('members' not in value for value in response.data['results'])
+        assert all('members' in value for value in response.data['results'])
 
     def test_get_serializer_class__non_staff_request__projects_with_members(self):
         self.client.force_authenticate(self.simple_user)

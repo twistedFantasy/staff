@@ -1,3 +1,4 @@
+import logging
 from datetime import date, datetime, timedelta
 
 
@@ -17,13 +18,17 @@ def today() -> date:
 
 
 def true(value: str) -> bool:
-    return value in ['true', 'True', '1', 'yes', 'on', True]
+    return value in ['true', 'True', '1', 'yes', 'on']
 
 
 def to_list(value, sep: str = ',', exclude=(None, '', {}, [])) -> list:
     if value in exclude:
         return []
     return [v.strip() for v in value.split(sep)]
+
+
+def get_logger(path):
+    return logging.getLogger(path)
 
 
 def workdays(start: date, end: date, excluded: tuple = (6, 7)):
@@ -58,4 +63,3 @@ class Day:
         else:
             self.obj.date = start + timedelta(days=ago)
         self.obj.day = self.obj.date.strftime(self.format)
-

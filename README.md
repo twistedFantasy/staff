@@ -6,47 +6,22 @@ And of course docker one love!
 
 # Versions
 ```
-Python: 3.7.3
-Django: 2.2.1
+Python: 3.8.0
+Django: 2.2.7
 Django Rest Framework: 3.9.4
-PostgreSQL: 11.3
-Docker: 18.09.0
-docker-compose: 1.23.1
+PostgreSQL: 12.0
+Docker: 19.03.5
+docker-compose: 1.24.1
+...
 ```
 
-# Docker & Docker-Compose install
-``` 
-https://docs.docker.com/install/linux/docker-ce/fedora/
-https://github.com/docker/compose/releases
-```
+# Local development
+Installation & Configuration:
+* [virtualbox](./readme/VIRTUALBOX.md)
+* [vagrant](./readme/VAGRANT.md)
+* [docker](./readme/DOCKER.md)
+* [development](./readme/DEVELOPMENT.md)
 
-# Use vagrant if you want
-```
-vagrant up
-vagrant ssh
-```
-
-# How to run it locally
-```
-docker-compose -f docker-compose-local.yml up -d
-```
-
-# Useful information
-```
-1) How to check logs
-docker-compose -f docker-compose-local.yml logs -f ssm
-
-or just use portainer if terminal scares you
-
-2) How to run tests?
-docker-compose -f docker-compose-local.yml exec ssm pytest
-docker-compose -f docker-compose-local.yml exec ssm pytest ssm/users/tests/test_views.py
-docker-compose -f docker-compose-local.yml exec ssm pytest ssm/users/tests/test_views.py::SSMTokenObtainTestCase
-docker-compose -f docker-compose-local.yml exec ssm pytest ssm/users/tests/test_views.py::SSMTokenObtainTestCase::test_token_obtain__staff_user_correct_credentials
-
-3) Check tests coverage
-coverage report will be automatically provided in html format after pytest executing by ssm/htmlcov location
-
-4) How to install new package in Pipfile & Pipfile.lock
-docker-compose -f docker-compose-local.yml exec ssm pipenv install django==2.2.1
-```
+# Standards
+* pep8: max-line-length=119
+* [passwords](./readme/PASSWORDS.md)

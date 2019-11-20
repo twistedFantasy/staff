@@ -7,14 +7,14 @@ class AssessmentTestCase(TestCase):
 
     def test__str(self):
         assessment = AssessmentFactory()
-        assert str(assessment) == f'{assessment.id} (assessment {assessment.user})'
+        assert str(assessment) == f'{assessment.user} (assessment {assessment.id})'
 
 
 class CheckpointTestCase(TestCase):
 
     def test__str(self):
         checkpoint = CheckpointFactory()
-        assert str(checkpoint) == f'{checkpoint.id} (checkpoint {checkpoint.date})'
+        assert str(checkpoint) == f'{checkpoint.date} (checkpoint {checkpoint.id})'
 
 
 class TaskTestCase(TestCase):

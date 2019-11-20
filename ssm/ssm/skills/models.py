@@ -44,17 +44,3 @@ class UserSkillModel(BaseModel):
 
     def __str__(self):
         return f'{self.user}-{self.skill}'
-
-
-class Verification(BaseModel):
-    skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
-    question = models.TextField('Question')
-    answer = models.TextField('Answer')
-
-    class Meta:
-        app_label = 'skills'
-        verbose_name_plural = 'Verifications'
-        ordering = ['skill']
-
-    def __str__(self):
-        return f'{self.skill} (verification {self.id})'

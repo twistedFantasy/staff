@@ -1,4 +1,4 @@
-version: '3.3' # FIXME: 3.7
+version: '3.7'
 
 networks:
   network:
@@ -12,7 +12,7 @@ volumes:
 
 services:
   web:
-    image: "node:10.16.0"
+    image: "node:10.17.0"
     command: bash -c "npm install & npm run serve"
     restart: on-failure
     working_dir: /usr/src/frontend/
@@ -28,19 +28,18 @@ services:
   ssm:
     build:
       context: ./
-      dockerfile: ssm/docker/Dockerfile.local
+      dockerfile: ssm/docker/Dockerfile
       args:
-         IMAGE: "python:3.7.3"
-         APP_PATH: "/usr/src/ssm/"
-         DATA_PATH: "/var/ssm/data/"
-         SCRIPTS_PATH: "/usr/src/scripts"
+         IMAGE: "python:3.8.0"
+         APP_PATH: "/var/staff/ssm/"
+         DATA_PATH: "/var/staff/data/"
     restart: on-failure
     env_file:
       - ssm/docker/env/local.env
     ports:
       - 8000:8000
     volumes:
-      - ./ssm:/usr/src/ssm/
+      - ./ssm:/var/staff/ssm/
       - ssm-data:/var/ssm/data/
     depends_on:
       - postgres
@@ -51,18 +50,17 @@ services:
   supervisor:
     build:
       context: ./
-      dockerfile: ssm/docker/Dockerfile.local
+      dockerfile: ssm/docker/Dockerfile
       args:
-          IMAGE: "python:3.7.3"
-          APP_PATH: "/usr/src/ssm/"
-          DATA_PATH: "/var/ssm/data/"
-          SCRIPTS_PATH: "/usr/src/scripts"
+          IMAGE: "python:3.8.0"
+          APP_PATH: "/var/staff/ssm/"
+          DATA_PATH: "/var/staff/data/"
     command: /usr/local/bin/supervisord -c /etc/supervisord.conf
     restart: on-failure
     env_file:
       - ssm/docker/env/local.env
     volumes:
-      - ./ssm:/usr/src/ssm/
+      - ./ssm:/var/staff/ssm/
       - ssm-data:/var/ssm/data/
     depends_on:
       - postgres
@@ -75,19 +73,19 @@ services:
       context: ./
       dockerfile: ssm/docker/Dockerfile.cron
       args:
-        IMAGE: "python:3.7.3"
-        APP_PATH: "/usr/src/ssm/"
+        IMAGE: "python:3.8.0"
+        APP_PATH: "/var/staff/ssm/"
         CRON_PATH: "/etc/cron.d/"
     restart: on-failure
     env_file:
       - ssm/docker/env/local.env
     volumes:
-      - ./ssm:/usr/src/ssm/
+      - ./ssm:/var/staff/ssm/
     networks:
       - network
 
   postgres:
-    image: "postgres:11.3-alpine"
+    image: "postgres:11.5-alpine"
     env_file:
       - ssm/docker/env/local.env
     ports:
@@ -98,18 +96,18 @@ services:
       - network
 
   redis:
-    image: "redis:5.0.5-alpine"
+    image: "redis:5.0.6-alpine"
     volumes:
       - redis-data:/data
     networks:
       - network
 
   portainer:
-    image: portainer/portainer
+    image: portainer/portainer:1.22.1
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer-data:/data
     ports:
-      - "8897:9000"
+      - "9000:9000"
     networks:
       - network

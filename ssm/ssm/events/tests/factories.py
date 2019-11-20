@@ -1,6 +1,6 @@
 from factory import DjangoModelFactory, Faker
 
-from ssm.events.models import Event, FAQ
+from ssm.events.models import Event
 
 
 class EventFactory(DjangoModelFactory):
@@ -14,15 +14,4 @@ class EventFactory(DjangoModelFactory):
     end_date = Faker('date')
     notify = Faker('boolean')
     to = Faker('email')
-    active = Faker('boolean')
-
-
-class FAQFactory(DjangoModelFactory):
-
-    class Meta:
-        model = FAQ
-
-    question = Faker('word')
-    answer = Faker('text')
-    order = Faker('random_number')
     active = Faker('boolean')

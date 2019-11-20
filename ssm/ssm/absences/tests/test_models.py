@@ -8,7 +8,7 @@ from ssm.absences.tests.factories import AbsenceFactory
 class AbsenceTestCase(TestCase):
 
     def absence_str(self, absence):
-        return f'{absence.id} (absences {absence.user.id if absence.user else "-"})'
+        return f'{absence.user.id if absence.user else "-"} (absences {absence.id})'
 
     def test__str_with_user(self):
         absence = AbsenceFactory()

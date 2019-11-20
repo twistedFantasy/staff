@@ -11,7 +11,7 @@ from ssm.absences.views import AbsenceViewSet
 from ssm.assessments.views import AssessmentViewSet, CheckpointViewSet, TaskViewSet
 from ssm.skills.views import SkillViewSet
 from ssm.projects.views import ProjectViewSet
-from ssm.events.views import EventViewSet, FAQViewSet
+from ssm.events.views import EventViewSet
 
 
 admin.autodiscover()
@@ -28,7 +28,6 @@ router.register(r'assessments', AssessmentViewSet)
 router.register(r'checkpoints', CheckpointViewSet)
 router.register(r'tasks', TaskViewSet)
 router.register(r'events', EventViewSet)
-router.register(r'faq', FAQViewSet)
 
 urlpatterns = [
     # built-in

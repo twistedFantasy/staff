@@ -1,4 +1,4 @@
-from factory import DjangoModelFactory, Faker, RelatedFactory
+from factory import DjangoModelFactory, Faker
 
 from ssm.users.models import User
 
@@ -9,6 +9,7 @@ class UserFactory(DjangoModelFactory):
         model = User
 
     email = Faker('email')
+    is_active = True
     is_staff = False
     is_superuser = False
 

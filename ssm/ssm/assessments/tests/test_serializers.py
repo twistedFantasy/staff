@@ -14,7 +14,7 @@ class StaffAssessmentSerializerTestCase(TestCase):
         assessment = AssessmentFactory()
         serializer = StaffAssessmentSerializer(assessment)
         for field in ASSESSMENT_FIELDS:
-            if field not in ASSESSMENT_CUSTOM_FIELDS:
+            if field not in ASSESSMENT_CUSTOM_FIELDS: # FIXME: should be hard-coded here
                 assert serializer.data[field] == getattr(assessment, field)
 
     def test__empty_read_only_fields(self):

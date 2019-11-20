@@ -1,6 +1,6 @@
 from django.db import transaction
 
-from rest_framework.serializers import ModelSerializer, CharField, EmailField, IntegerField
+from rest_framework.serializers import Serializer, ModelSerializer, CharField, EmailField, IntegerField
 from drf_writable_nested import WritableNestedModelSerializer
 
 from ssm.users.models import User
@@ -17,6 +17,11 @@ READ_ONLY_FIELDS = ['id', 'email', 'is_staff', 'has_card', 'has_key']
 
 class SSMTokenObtainPairSerializer(CustomTokenObtainPairSerializer):
     pass
+
+
+class ChangePasswordSerializer(Serializer):
+    old_password = CharField(required=True)
+    new_password = CharField(required=True)
 
 
 class StaffByUserSerializer(ModelSerializer):

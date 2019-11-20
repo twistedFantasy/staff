@@ -1,25 +1,22 @@
 ARG IMAGE
 FROM $IMAGE
-LABEL maintainer="Denis Sventitsky <denis.sventitsky@gmail.com>"
+LABEL maintainer="Denis Sventitsky <denis.sventitsky@gmail.com> / Twisted Fantasy <twisteeed.fantasy@gmail.com>"
 
 ARG APP_PATH
 ARG DATA_PATH
-ARG SCRIPTS_PATH
 
 ENV PYTHONUNBUFFERED 1
 
 RUN mkdir -p $APP_PATH
-RUN mkdir -p $SCRIPTS_PATH
 RUN mkdir -p $DATA_PATH
 WORKDIR $APP_PATH
 
 RUN pip install pipenv==2018.11.26
 
-COPY ssm/ssm/core/systemuser.py $SCRIPTS_PATH
 COPY ssm/Pipfile ssm/Pipfile.lock ./
 RUN pipenv install --system --deploy
 COPY ssm/ .
 
 COPY ssm/docker/supervisord/celery.conf /etc/supervisord.conf
 
-CMD python3 manage.py migrate && python3 /usr/src/scripts/systemuser.py && python3 manage.py runserver 0.0.0.0:8000
+CMD python3 manage.py migrate && python3 manage.py create_admin && python3 manage.py runserver 0.0.0.0:8000

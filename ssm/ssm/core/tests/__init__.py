@@ -6,7 +6,7 @@ from rest_framework.test import APITestCase
 EXCLUDE = ['password', 'skills']
 
 
-class BaseTestCase(APITestCase):
+class BaseTestCase(APITestCase):  # FIXME: remove?
     list_url = None
     detail_url = None
 
