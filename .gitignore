@@ -23,7 +23,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+#lib/ -- this breaks codemirror
 lib64/
 parts/
 sdist/

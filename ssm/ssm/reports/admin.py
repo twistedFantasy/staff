@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib import admin
 from django.contrib.admin.helpers import ActionForm
+from reversion.admin import VersionAdmin
 
 from ssm.reports.models import Report, History
 from ssm.core.decorators import message_user
@@ -12,7 +13,7 @@ class ReportActionForm(ActionForm):
 
 
 @admin.register(Report)
-class ReportAdmin(admin.ModelAdmin):
+class ReportAdmin(VersionAdmin):
     action_form = ReportActionForm
     list_display = ['name']
     search_fields = ['name', 'description']

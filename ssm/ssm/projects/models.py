@@ -14,6 +14,7 @@ ROLES = Choices((
     ('backend_developer', 'Back-end Developer'), ('data_scientist', 'Data Scientist'),
     ('designer', 'Designer'), ('team_lead', 'Team Lead'), ('product_owner', 'Product Owner')
 )
+PRIORITY = Choices(('low', 'Low'), ('normal', 'Normal'), ('high', 'High'))
 
 
 def directory_path(instance, filename):
@@ -23,7 +24,10 @@ def directory_path(instance, filename):
 
 class Project(BaseModel):
     name = models.CharField('Name', max_length=32, unique=True)
+    link = models.URLField('Link', null=True, blank=True)
     description = models.TextField('Description', null=True, blank=True)
+    task_examples = models.TextField('Task Examples', null=True, blank=True)
+    technology_stack = models.TextField('Technology Stack', null=True, blank=True)
     specification = models.FileField('Specification', upload_to=directory_path, null=True, blank=True)
     start_date = models.DateField('Start Date', null=True, blank=True)
     end_date = models.DateField('End Date', null=True, blank=True)
@@ -36,7 +40,7 @@ class Project(BaseModel):
         verbose_name_plural = 'Projects'
         ordering = ['-modified']
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'{self.name} (project {self.id})'
 
     def save(self, *args, **kwargs):
@@ -47,6 +51,7 @@ class Project(BaseModel):
 class MembersModel(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    key_person = models.BooleanField('Key Person', default=False)
     role = models.CharField('Role', max_length=64, choices=ROLES, default=ROLES.developer)
     hours_per_day = models.IntegerField('Hours Per Day', default=8)
     joined_date = models.DateField('Joined Date')
@@ -58,5 +63,22 @@ class MembersModel(models.Model):
         unique_together = ('user', 'project', 'role')
         ordering = ['user']
 
-    def __str__(self):
-        return  f'{self.user}-{self.project}'
+    def __str__(self) -> str:
+        return f'{self.user}-{self.project}'
+
+
+class Vacancy(BaseModel):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    level = models.CharField('Level', max_length=128, null=True, blank=True)
+    priority = models.CharField('Priority', max_length=32, choices=PRIORITY, default=PRIORITY.normal)
+    requirements = models.TextField('Requirements', null=True, blank=True)
+    count = models.IntegerField('Count')
+    active = models.BooleanField('Active', default=False)
+
+    class Meta:
+        app_label = 'projects'
+        verbose_name_plural = 'Vacancies'
+        ordering = ['project']
+
+    def __str__(self) -> str:
+        return f'{self.project}-{self.level}'

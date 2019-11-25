@@ -44,11 +44,14 @@ INSTALLED_APPS = [
 
     # 3rd party
     'taggit',
+    'reversion',
     'corsheaders',
     'djcelery_email',
     'debug_toolbar',
     'rest_framework',
     'django_filters',
+    'health_check',     # required
+    'health_check.db',  # stock Django health checkers
 
     # ssm
     'ssm.core.apps.Config',
@@ -273,6 +276,12 @@ ASSESSMENT_MESSAGE = "Hey, just a friendly reminder, assessment is today. Are yo
 
 MEDIA_ROOT = '/var/ssm/data/'
 MEDIA_URL = '/media/'
+
+# admin
+ADMIN_URL = os.environ['ADMIN_URL']
+
+# Codemirror
+CODEMIRROR_PATH = 'components/codemirror-5.48.2'  # latest changeset from github
 
 # tests
 TEST_STAFFUSER_EMAIL = 'test.staffuser@gmail.com'

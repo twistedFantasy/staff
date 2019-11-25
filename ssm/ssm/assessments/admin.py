@@ -1,11 +1,13 @@
 from django.contrib import admin
+from reversion.admin import VersionAdmin
 
 from ssm.assessments.models import Assessment, Checkpoint, Task
 
 
 @admin.register(Assessment)
-class AssessmentAdmin(admin.ModelAdmin):
+class AssessmentAdmin(VersionAdmin):
     list_display = ['user', 'status', 'start_date', 'end_date']
+    list_filter = ['status']
     search_fields = ['start_date', 'end_date']
     fieldsets = [
         (None, {'fields': ['decision_by']}),
@@ -15,7 +17,7 @@ class AssessmentAdmin(admin.ModelAdmin):
 
 
 @admin.register(Checkpoint)
-class CheckpointAdmin(admin.ModelAdmin):
+class CheckpointAdmin(VersionAdmin):
     list_display = ['assessment', 'date']
     search_fields = ['date']
     fieldsets = [
@@ -25,7 +27,7 @@ class CheckpointAdmin(admin.ModelAdmin):
 
 
 @admin.register(Task)
-class TaskAdmin(admin.ModelAdmin):
+class TaskAdmin(VersionAdmin):
     list_display = ['checkpoint', 'title', 'completed']
     search_fields = ['title', 'description']
     fieldsets = [

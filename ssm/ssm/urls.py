@@ -34,6 +34,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # 3rd party apps
+    path('health/', include('health_check.urls')),
     path('__debug__/', include(debug_toolbar.urls)),
 
     path('api/v1/token/obtain/', SSMTokenObtainPairView.as_view(), name='auth'),

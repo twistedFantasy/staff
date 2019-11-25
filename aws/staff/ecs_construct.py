@@ -35,12 +35,22 @@ class ECSConstruct(core.Construct):
                     'DJANGO_SETTINGS_MODULE': 'ssm.settings',
                 },
                 'secrets': {
+                    'ADMIN_URL': '',
                     'DATABASE_NAME': Param.value_for_string_parameter(f'/{app_env}/ssm/DATABASE_NAME'),
                     'TEST_DATABASE_NAME': Param.value_for_string_parameter(f'/{app_env}/ssm/TEST_DATABASE_NAME'),
                     'DATABASE_USER': Param.value_for_string_parameter(f'/{app_env}/ssm/DATABASE_USER'),
                     'DATABASE_PASSWORD': Param.value_for_string_parameter(f'/{app_env}/ssm/DATABASE_PASSWORD'),
                     'DATABASE_HOST': Param.value_for_string_parameter(f'/{app_env}/ssm/DATABASE_HOST'),
                     'DATABASE_PORT': Param.value_for_string_parameter(f'/{app_env}/ssm/DATABASE_PORT'),
+                    'EMAIL_HOST_USER': '',
+                    'EMAIL_HOST_PASSWORD': '',
+                    'CELERY_BROKER_URL': '',
+                    'CELERY_RESULT_BACKEND': '',
+                    'CELERY_LOG_LEVEL': '',
+                    'CELERY_GENERAL_QUEUE': '',
+                    'CELERY_REPORT_QUEUE': '',
+                    'SYSTEM_EMAIL': Param.value_for_string_parameter(f'/{app_env}/ssm/SYSTEM_EMAIL'),
+                    'SYSTEM_PASSWORD': Param.value_for_string_parameter(f'/{app_env}/ssm/SYSTEM_PASSWORD'),
                 }
             },
         }

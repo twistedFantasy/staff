@@ -4,6 +4,7 @@ from django.db import models
 from django.conf import settings
 from django.core.mail import send_mail
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from model_utils.choices import Choices
 
 from ssm.core.models import BaseModel
 from ssm.core.helpers import today
@@ -15,6 +16,11 @@ NOTIFICATIONS = {
     BIRTHDAY: {'subject': settings.BIRTHDAY_SUBJECT, 'text': settings.BIRTHDAY_MESSAGE},
     ASSESSMENT: {'subject': settings.ASSESSMENT_SUBJECT, 'text': settings.ASSESSMENT_MESSAGE},
 }
+COLOR = Choices(('green', 'Green'), ('yellow', 'Yellow'), ('red', 'Red'), ('black', 'Black'))
+LEVEL = Choices(
+    ('junior', 'Junior'), ('junior_plus', 'Junior+'), ('middle', 'Middle'), ('middle_plus', 'Middle+'),
+    ('senior', 'Senior'), ('senior_plus', 'Senior+'),
+)
 
 
 class UserManager(BaseUserManager):
@@ -47,6 +53,9 @@ class User(AbstractBaseUser, BaseModel):
     is_active = models.BooleanField('Is Active', default=True)
     is_staff = models.BooleanField('Is Staff', default=False, db_index=True)
     is_superuser = models.BooleanField('Is Superuser', default=False, db_index=True)
+    mentor = models.ForeignKey('User', related_name='users_mentor', null=True, blank=True, on_delete=models.SET_NULL)
+    level = models.CharField('Level', max_length=32, choices=LEVEL, null=True, blank=True)
+    color = models.CharField('Color', max_length=32, choices=COLOR, null=True, blank=True)
 
     # notifications
     birthday_notification = models.DateField('Birthday Notification', null=True, blank=True)
@@ -116,3 +125,8 @@ class User(AbstractBaseUser, BaseModel):
 
     def get_working_hours(self, start_date: date, end_date: date) -> int:
         return self.working_hours * 21
+
+    def current_workload(self) -> int:
+        from ssm.projects.models import STATUS
+        params = {'user': self.id, 'project__status': STATUS.in_progress, 'left_date': None}
+        return self.membersmodel_set.filter(**params).aggregate(models.Sum('hours_per_day')).get('hours_per_day__sum', 0)
