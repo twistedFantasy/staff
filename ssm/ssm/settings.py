@@ -26,11 +26,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'nda)q)yyg@fse_ugenqof9h0^_atj)6+xc&lm@v7yi+1gbmplk'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if os.environ['ENV'] in ['dev', 'stg']:
+    DEBUG = True
+    ALLOWED_HOSTS = ['*']
+else:
+    DEBUG = False
+    ALLOWED_HOSTS = ['codex-soft']
 ENV = os.environ['ENV']
-
-ALLOWED_HOSTS = ['*']  # FIXME:
-
 
 # Application definition
 
@@ -150,9 +152,14 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.1/howto/static-files/
+# https://docs.djangoproject.com/en/2.2/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")  # for pretty django admin in release mode
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+    '/var/staff/ssm/external_static/',
+]
 
 # email
 EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
