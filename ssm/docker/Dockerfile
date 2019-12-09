@@ -17,6 +17,8 @@ COPY ssm/Pipfile ssm/Pipfile.lock ./
 RUN pipenv install --system --deploy
 COPY ssm/ .
 
+RUN python3 manage.py collectstatic --no-input
+
 COPY ssm/docker/supervisord/celery.conf /etc/supervisord.conf
 
-CMD python3 manage.py migrate && python3 manage.py create_admin && python3 manage.py runserver 0.0.0.0:8000
+CMD python3 manage.py migrate && python3 manage.py create_admin && uwsgi --ini uwsgi.ini --check-static /var/staff/ssm/
