@@ -33,6 +33,7 @@ class ECSConstruct(core.Construct):
         system_email = _.from_string_parameter_name(self, "system_email", f'/{app_env}/ssm/SYSTEM_EMAIL')
         system_password = _.from_string_parameter_name(self, "system_password", f'/{app_env}/ssm/SYSTEM_PASSWORD')
         params = {
+            'service_name': 'staff-fargate-service',
             'assign_public_ip': True,
             'cpu': 512,
             'memory_limit_mib': 1024,

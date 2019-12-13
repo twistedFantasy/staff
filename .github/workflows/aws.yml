@@ -56,7 +56,7 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: staff-repository
-        IMAGE_TAG: stg
+        IMAGE_TAG: stg-${{ github.sha }}
       run: |
         # Build a docker container and
         # push it to ECR so that it can
