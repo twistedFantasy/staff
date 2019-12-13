@@ -62,8 +62,7 @@ jobs:
         # push it to ECR so that it can
         # be deployed to ECS.
         docker build --build-arg IMAGE=python:3.8.0 --build-arg APP_PATH=/var/staff/ssm/ \
-        --build-arg DATA_PATH=/var/staff/data/ --build-arg UID=0 --build-arg GID=0 \
-        -f ssm/docker/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        --build-arg DATA_PATH=/var/staff/data/ -f ssm/docker/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 

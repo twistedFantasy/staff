@@ -28,7 +28,7 @@ services:
   ssm:
     build:
       context: ./
-      dockerfile: ssm/docker/Dockerfile
+      dockerfile: ssm/docker/Dockerfile.local
       args:
          IMAGE: "${PYTHON_IMAGE}"
          APP_PATH: "/var/staff/ssm/"
