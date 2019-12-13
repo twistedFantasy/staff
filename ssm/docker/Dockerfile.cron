@@ -2,10 +2,15 @@ ARG IMAGE
 FROM $IMAGE
 LABEL maintainer="Denis Sventitsky <denis.sventitsky@gmail.com> / Twisted Fantasy <twisteeed.fantasy@gmail.com>"
 
+ARG UID
+ARG GID
 ARG APP_PATH
 ARG CRON_PATH
 
 ENV PYTHONUNBUFFERED 1
+
+RUN groupadd -g $GID username && \
+    useradd -r -u $UID -g username username
 
 RUN mkdir -p $APP_PATH
 WORKDIR $APP_PATH
@@ -21,5 +26,7 @@ RUN pip install pipenv==2018.11.26
 COPY ssm/Pipfile ssm/Pipfile.lock ./
 RUN pipenv install --system --deploy
 COPY ssm/ .
+
+USER username
 
 CMD printenv | grep -v "no_proxy" >> /etc/environment && cron -f

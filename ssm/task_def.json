@@ -1,0 +1,227 @@
+{
+  "ipcMode": null,
+  "executionRoleArn": "arn:aws:iam::151262242197:role/staff-cdk-stg-StaffECSConstructstafffargateservice-R5G7G8SSBW1O",
+  "containerDefinitions": [
+    {
+      "dnsSearchDomains": [],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "secretOptions": [],
+        "options": {
+          "awslogs-group": "staff-cdk-stg-StaffECSConstructstafffargateserviceTaskDefwebLogGroupF78BF5A8-1RLSKKLCYNA4W",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "staff-fargate-service"
+        }
+      },
+      "entryPoint": [],
+      "portMappings": [
+        {
+          "hostPort": 80,
+          "protocol": "tcp",
+          "containerPort": 80
+        }
+      ],
+      "command": [],
+      "linuxParameters": null,
+      "cpu": 0,
+      "environment": [
+        {
+          "name": "CORS_ORIGIN_ALLOW_ALL",
+          "value": "True"
+        },
+        {
+          "name": "DATABASE_HOST",
+          "value": "staff-stg-ssm.c5y9p2rfys5t.us-east-2.rds.amazonaws.com"
+        },
+        {
+          "name": "DJANGO_SETTINGS_MODULE",
+          "value": "ssm.settings"
+        },
+        {
+          "name": "ENV",
+          "value": "stg"
+        },
+        {
+          "name": "PROJECT",
+          "value": "ssm"
+        },
+        {
+          "name": "PYTHONPATH",
+          "value": "/var/staff/ssm/"
+        }
+      ],
+      "resourceRequirements": null,
+      "ulimits": [],
+      "dnsServers": [],
+      "mountPoints": [],
+      "workingDirectory": null,
+      "secrets": [
+        {
+          "valueFrom": "arn:aws:ssm:us-east-2:151262242197:parameter/stg/ssm/ADMIN_URL",
+          "name": "ADMIN_URL"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:us-east-2:151262242197:parameter/stg/ssm/DATABASE_NAME",
+          "name": "DATABASE_NAME"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:us-east-2:151262242197:parameter/stg/ssm/TEST_DATABASE_NAME",
+          "name": "TEST_DATABASE_NAME"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:us-east-2:151262242197:parameter/stg/ssm/DATABASE_USER",
+          "name": "DATABASE_USER"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:us-east-2:151262242197:parameter/stg/ssm/DATABASE_PASSWORD",
+          "name": "DATABASE_PASSWORD"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:us-east-2:151262242197:parameter/stg/ssm/DATABASE_PORT",
+          "name": "DATABASE_PORT"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:us-east-2:151262242197:parameter/stg/ssm/EMAIL_HOST_USER",
+          "name": "EMAIL_HOST_USER"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:us-east-2:151262242197:parameter/stg/ssm/EMAIL_HOST_PASSWORD",
+          "name": "EMAIL_HOST_PASSWORD"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:us-east-2:151262242197:parameter/stg/ssm/CELERY_BROKER_URL",
+          "name": "CELERY_BROKER_URL"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:us-east-2:151262242197:parameter/stg/ssm/CELERY_RESULT_BACKEND",
+          "name": "CELERY_RESULT_BACKEND"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:us-east-2:151262242197:parameter/stg/ssm/CELERY_LOG_LEVEL",
+          "name": "CELERY_LOG_LEVEL"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:us-east-2:151262242197:parameter/stg/ssm/CELERY_GENERAL_QUEUE",
+          "name": "CELERY_GENERAL_QUEUE"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:us-east-2:151262242197:parameter/stg/ssm/CELERY_REPORT_QUEUE",
+          "name": "CELERY_REPORT_QUEUE"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:us-east-2:151262242197:parameter/stg/ssm/SYSTEM_EMAIL",
+          "name": "SYSTEM_EMAIL"
+        },
+        {
+          "valueFrom": "arn:aws:ssm:us-east-2:151262242197:parameter/stg/ssm/SYSTEM_PASSWORD",
+          "name": "SYSTEM_PASSWORD"
+        }
+      ],
+      "dockerSecurityOptions": [],
+      "memory": null,
+      "memoryReservation": null,
+      "volumesFrom": [],
+      "stopTimeout": null,
+      "image": "151262242197.dkr.ecr.us-east-2.amazonaws.com/staff-staff-1s8kde64c4tc2:stg",
+      "startTimeout": null,
+      "firelensConfiguration": null,
+      "dependsOn": null,
+      "disableNetworking": null,
+      "interactive": null,
+      "healthCheck": null,
+      "essential": true,
+      "links": [],
+      "hostname": null,
+      "extraHosts": [],
+      "pseudoTerminal": null,
+      "user": null,
+      "readonlyRootFilesystem": null,
+      "dockerLabels": {},
+      "systemControls": [],
+      "privileged": null,
+      "name": "web"
+    }
+  ],
+  "placementConstraints": [],
+  "memory": "1024",
+  "taskRoleArn": "arn:aws:iam::151262242197:role/staff-cdk-stg-StaffECSConstructstafffargateservice-5P29EDKBT2Z1",
+  "compatibilities": [
+    "EC2",
+    "FARGATE"
+  ],
+  "taskDefinitionArn": "arn:aws:ecs:us-east-2:151262242197:task-definition/staffcdkstgStaffECSConstructstafffargateserviceTaskDefD82D8748:3",
+  "family": "staffcdkstgStaffECSConstructstafffargateserviceTaskDefD82D8748",
+  "requiresAttributes": [
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "ecs.capability.execution-role-awslogs"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "com.amazonaws.ecs.capability.ecr-auth"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.17"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "com.amazonaws.ecs.capability.task-iam-role"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "ecs.capability.execution-role-ecr-pull"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "ecs.capability.secrets.ssm.environment-variables"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "ecs.capability.task-eni"
+    }
+  ],
+  "pidMode": null,
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "networkMode": "awsvpc",
+  "cpu": "512",
+  "revision": 3,
+  "status": "ACTIVE",
+  "inferenceAccelerators": null,
+  "proxyConfiguration": null,
+  "volumes": []
+}

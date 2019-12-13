@@ -63,3 +63,5 @@ command.
  * `cdk docs`        open CDK documentation
 
 Enjoy!
+
+[CDK update](https://docs.aws.amazon.com/cdk/latest/guide/getting_started.html)

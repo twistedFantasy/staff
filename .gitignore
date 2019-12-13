@@ -1,6 +1,8 @@
+static
+
 # ide
 .idea
-.env
+aws/.env
 cdk.out
 
 # custom

@@ -30,9 +30,19 @@ services:
       context: ./
       dockerfile: ssm/docker/Dockerfile
       args:
-         IMAGE: "python:3.8.0"
+         IMAGE: "${PYTHON_IMAGE}"
          APP_PATH: "/var/staff/ssm/"
          DATA_PATH: "/var/staff/data/"
+         UID: "${UID}"
+         GID: "${GID}"
+    command:
+      - bash
+      - -c
+      - |
+        python3 manage.py collectstatic --no-input
+        python3 manage.py migrate
+        python3 manage.py create_admin
+        python3 manage.py runserver 0.0.0.0:8000
     restart: on-failure
     env_file:
       - ssm/docker/env/local.env
@@ -52,9 +62,11 @@ services:
       context: ./
       dockerfile: ssm/docker/Dockerfile
       args:
-          IMAGE: "python:3.8.0"
+          IMAGE: "${PYTHON_IMAGE}"
           APP_PATH: "/var/staff/ssm/"
           DATA_PATH: "/var/staff/data/"
+          UID: "${UID}"
+          GID: "${GID}"
     command: /usr/local/bin/supervisord -c /etc/supervisord.conf
     restart: on-failure
     env_file:
@@ -73,9 +85,11 @@ services:
       context: ./
       dockerfile: ssm/docker/Dockerfile.cron
       args:
-        IMAGE: "python:3.8.0"
+        IMAGE: "${PYTHON_IMAGE}"
         APP_PATH: "/var/staff/ssm/"
         CRON_PATH: "/etc/cron.d/"
+        UID: "${UID}"
+        GID: "${GID}"
     restart: on-failure
     env_file:
       - ssm/docker/env/local.env
