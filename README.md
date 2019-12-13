@@ -1,4 +1,4 @@
-# staffy
+# staffy![](staffy.gif)
 
 The Goal of this app is to provide simple staff management(ssm) application to manage employees basic information, skills and absences in a clear and easy way for both employees and staff folks.
 Backend will be supported by the power of Python and Django/Django Rest Framework together with additional 3-rd party packages while frontend will feel the power and love of Vue.js.
