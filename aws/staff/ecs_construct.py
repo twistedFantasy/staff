@@ -39,7 +39,7 @@ class ECSConstruct(core.Construct):
             'memory_limit_mib': 1024,
             'cluster': cluster,
             'desired_count': 1,
-            'listener_port': 80,
+            'listener_port': 8080,
             'public_load_balancer': True,
             'task_image_options': {
                 'image': ecs.ContainerImage.from_ecr_repository(repository, tag=app_env),
