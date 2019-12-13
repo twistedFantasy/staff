@@ -11,7 +11,7 @@ from aws_cdk.aws_ssm import StringParameter as _
 
 class ECSConstruct(core.Construct):
 
-    def __init__(self, scope: core.Construct, id: str, *, app_env: str, vpc: ec2.Vpc, rds: rds.DatabaseInstance,
+    def __init__(self, scope: core.Construct, id: str, *, app_env: str, vpc: ec2.Vpc, rds: rds.CfnDBInstance,
                  repository: ecr.Repository, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
@@ -48,7 +48,7 @@ class ECSConstruct(core.Construct):
                     'PYTHONPATH': '/var/staff/ssm/',
                     'CORS_ORIGIN_ALLOW_ALL': 'True',
                     'DJANGO_SETTINGS_MODULE': 'ssm.settings',
-                    'DATABASE_HOST': rds.db_instance_endpoint_address,
+                    'DATABASE_HOST': rds.attr_endpoint_address,
                 },
                 'secrets': {
                     'ADMIN_URL': ecs.Secret.from_ssm_parameter(admin_url),

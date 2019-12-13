@@ -1,6 +1,6 @@
 {
   "ipcMode": null,
-  "executionRoleArn": "arn:aws:iam::151262242197:role/staff-cdk-stg-StaffECSConstructstafffargateservice-R5G7G8SSBW1O",
+  "executionRoleArn": "arn:aws:iam::151262242197:role/staff-cdk-stg-StaffECSConstructstafffargateservice-1LJ92QMHAD95Z",
   "containerDefinitions": [
     {
       "dnsSearchDomains": [],
@@ -8,7 +8,7 @@
         "logDriver": "awslogs",
         "secretOptions": [],
         "options": {
-          "awslogs-group": "staff-cdk-stg-StaffECSConstructstafffargateserviceTaskDefwebLogGroupF78BF5A8-1RLSKKLCYNA4W",
+          "awslogs-group": "staff-cdk-stg-StaffECSConstructstafffargateserviceTaskDefwebLogGroupF78BF5A8-NZDGYNVTWWXZ",
           "awslogs-region": "us-east-2",
           "awslogs-stream-prefix": "staff-fargate-service"
         }
@@ -122,7 +122,7 @@
       "memoryReservation": null,
       "volumesFrom": [],
       "stopTimeout": null,
-      "image": "151262242197.dkr.ecr.us-east-2.amazonaws.com/staff-staff-1s8kde64c4tc2:stg",
+      "image": "151262242197.dkr.ecr.us-east-2.amazonaws.com/staff-repository:stg",
       "startTimeout": null,
       "firelensConfiguration": null,
       "dependsOn": null,
@@ -144,12 +144,12 @@
   ],
   "placementConstraints": [],
   "memory": "1024",
-  "taskRoleArn": "arn:aws:iam::151262242197:role/staff-cdk-stg-StaffECSConstructstafffargateservice-5P29EDKBT2Z1",
+  "taskRoleArn": "arn:aws:iam::151262242197:role/staff-cdk-stg-StaffECSConstructstafffargateservice-VXBE4FSGSNZ2",
   "compatibilities": [
     "EC2",
     "FARGATE"
   ],
-  "taskDefinitionArn": "arn:aws:ecs:us-east-2:151262242197:task-definition/staffcdkstgStaffECSConstructstafffargateserviceTaskDefD82D8748:3",
+  "taskDefinitionArn": "arn:aws:ecs:us-east-2:151262242197:task-definition/staffcdkstgStaffECSConstructstafffargateserviceTaskDefD82D8748:4",
   "family": "staffcdkstgStaffECSConstructstafffargateserviceTaskDefD82D8748",
   "requiresAttributes": [
     {
@@ -219,7 +219,7 @@
   ],
   "networkMode": "awsvpc",
   "cpu": "512",
-  "revision": 3,
+  "revision": 4,
   "status": "ACTIVE",
   "inferenceAccelerators": null,
   "proxyConfiguration": null,

@@ -16,12 +16,12 @@ class StaffStack(core.Stack):
 
         IAMConstruct(self, 'Staff-IAM-Construct', app_env=app_env)
         vpc = VPCConstruct(self, 'Staff-VPC-Construct', app_env=app_env)
-        # rds = RDSConstruct(self, 'Staff-RDS-Construct', app_env=app_env, vpc=vpc.object)
+        rds = RDSConstruct(self, 'Staff-RDS-Construct', app_env=app_env, vpc=vpc.object)
         ecr = ECRConstruct(self, 'Staff-ECR-Construct', app_env=app_env)
-        # params = {
-        #     'app_env': app_env,
-        #     'vpc': vpc.object,
-        #     'rds': rds.object,
-        #     'repository': ecr.object,
-        # }
-        # ECSConstruct(self, 'Staff-ECS-Construct', **params)
+        params = {
+            'app_env': app_env,
+            'vpc': vpc.object,
+            'rds': rds.object,
+            'repository': ecr.object,
+        }
+        ECSConstruct(self, 'Staff-ECS-Construct', **params)
