@@ -8,6 +8,8 @@ from staff.vpc_construct import VPCConstruct
 from staff.ecs_construct import ECSConstruct
 from staff.ecr_construct import ECRConstruct
 from staff.rds_construct import RDSConstruct
+from staff.s3_construct import S3Construct
+from staff.sqs_construct import SQSConstruct
 
 
 class StaffStack(core.Stack):
@@ -28,3 +30,5 @@ class StaffStack(core.Stack):
             'log_group': logs.object,
         }
         ECSConstruct(self, 'Staff-ECS-Construct', **params)
+        S3Construct(self, 'Staff-S3-Construct', app_env=app_env)
+        SQSConstruct(self, 'Staff-SQS-Construct', app_env=app_env)
