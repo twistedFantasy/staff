@@ -11,3 +11,6 @@ aws-cdk.aws-elasticache==1.19.0
 aws-cdk.aws-cloudwatch==1.19.0
 aws-cdk.aws-logs==1.19.0
 aws-cdk.aws-elasticloadbalancingv2==1.19.0
+aws-cdk.aws-eks==1.19.0
+aws-cdk.aws-route53==1.19.0
+aws-cdk.aws-efs==1.19.0
